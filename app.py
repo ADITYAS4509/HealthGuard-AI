@@ -6,6 +6,7 @@ import os
 import sqlite3
 import time
 import random
+import threading
 import requests  # Required by predict_from_rapidapi
 from werkzeug.security import generate_password_hash, check_password_hash
 import smtplib
@@ -1277,4 +1278,23 @@ You are NOT a replacement for a doctor. Be helpful, accurate, and safe."""
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))
+    # Initialize DB
+    init_db()
+    
+    # Start Keep-Alive thread if on Render
+    if os.environ.get("RENDER"):
+        def keep_alive():
+            url = f"https://healthguard-ai-23pi.onrender.com/health"
+            print(f"[SYS] Keep-alive thread started. Target: {url}")
+            while True:
+                try:
+                    # Initial wait to let server start
+                    time.sleep(600) # Ping every 10 minutes
+                    r = requests.get(url, timeout=10)
+                    print(f"[SYS] Keep-alive ping: {r.status_code}")
+                except Exception as e:
+                    print(f"[SYS] Keep-alive error: {e}")
+
+        threading.Thread(target=keep_alive, daemon=True).start()
+
     app.run(host='0.0.0.0', port=port, debug=False, use_reloader=False)
