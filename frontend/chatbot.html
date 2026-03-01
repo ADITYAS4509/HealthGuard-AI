@@ -523,7 +523,7 @@
             chatContainer.scrollTop = chatContainer.scrollHeight;
 
             // Robust Base URL logic matching app.js
-            const BACKEND_URL = window.VITE_API_URL || ' https://healthguard-ai-23pi.onrender.com'; // Relative if on same port, else use override
+            const BACKEND_URL = window.VITE_API_URL || 'https://healthguard-ai-23pi.onrender.com'; // Relative if on same port, else use override
             const apiEndpoint = BACKEND_URL ? `${BACKEND_URL}/chat` : '/chat';
 
             try {
