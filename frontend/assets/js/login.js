@@ -132,6 +132,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (el.btnContinueLogin) el.btnContinueLogin.addEventListener('click', () => showAuthView('login'));
     if (el.btnContinueGuest) el.btnContinueGuest.addEventListener('click', () => {
+        const guestSession = { success: true, data: { is_guest: true, full_name: 'Guest User', username: 'guest' } };
+        localStorage.setItem('hg_user_session', JSON.stringify(guestSession));
 
         window.location.href = 'index.html';
     });

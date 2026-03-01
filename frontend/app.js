@@ -1624,7 +1624,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (session && session.data && !session.data.is_guest) {
             // MODE 3: AUTHENTICATED USER (Full Access)
             if (navLoginBtn) {
-                const displayName = session.data.full_name ? session.data.full_name.split(' ')[0] : session.data.username;
+                let displayName = session.data.full_name ? session.data.full_name.split(' ')[0] : session.data.username;
+                if (displayName.length > 12) displayName = displayName.substring(0, 10) + '..';
                 navLoginBtn.innerHTML = `👤 ${displayName} ▾`;
                 navLoginBtn.setAttribute('href', '#'); // Dropdown toggle
                 navLoginBtn.dataset.i18n = '';
