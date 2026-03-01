@@ -116,54 +116,48 @@ init_db()
 OTP_STORE = {}
 
 def send_otp_email(to_email, otp):
-    BREVO_SMTP_HOST = os.environ.get("BREVO_SMTP_SERVER", "smtp-relay.brevo.com")
-    BREVO_SMTP_PORT = int(os.environ.get("BREVO_SMTP_PORT", 587))
-    BREVO_SMTP_USER = os.environ.get("BREVO_SMTP_USER", os.environ.get("BREVO_SMTP_LOGIN"))
-    BREVO_SMTP_PASS = os.environ.get("BREVO_SMTP_PASS", os.environ.get("BREVO_SMTP_KEY"))
+    # Consolidate config names
+    host = os.environ.get("BREVO_SMTP_SERVER", os.environ.get("SMTP_SERVER", "smtp-relay.brevo.com"))
+    port = int(os.environ.get("BREVO_SMTP_PORT", 587))
+    user = os.environ.get("BREVO_SMTP_USER", os.environ.get("BREVO_SMTP_LOGIN", os.environ.get("SENDER_EMAIL")))
+    password = os.environ.get("BREVO_SMTP_PASS", os.environ.get("BREVO_SMTP_KEY"))
 
-    if not BREVO_SMTP_USER or not BREVO_SMTP_PASS:
-        print("ERROR: Brevo SMTP credentials missing. Check .env")
-        if os.getenv("APP_ENV") == "development":
-            print(f"[DEV MODE] OTP for {to_email}: {otp}")
+    if not user or not password:
+        print("ERROR: SMTP credentials missing. Please check your environment variables.")
+        # Fallback to logging the OTP if we are in dev or on Render (where SMTP is notoriously blocked)
+        if os.getenv("APP_ENV") == "development" or os.getenv("RENDER"):
+            print(f"[FALLBACK LOG] OTP for {to_email}: {otp}")
         return False
 
     try:
         msg = MIMEMultipart()
-        msg["From"] = BREVO_SMTP_USER
+        msg["From"] = user
         msg["To"] = to_email
         msg["Subject"] = "Your AI HealthGuard OTP Code"
 
         body = f"""
         Your OTP for AI HealthGuard is: {otp}
-        This code expires in 5 minutes.
-        Do not share this code with anyone.
+        This code expires in 10 minutes.
+        If you are seeing this in server logs (Render), use the code above to verify.
         """
         msg.attach(MIMEText(body, "plain"))
 
-        with smtplib.SMTP(BREVO_SMTP_HOST, BREVO_SMTP_PORT) as server:
+        # Render explicitly blocks port 587 and 465. 
+        # We use a 10s timeout to prevent the entire app from hanging when Render blocks the connection.
+        with smtplib.SMTP(host, port, timeout=10) as server:
             server.ehlo()
             server.starttls()
-            server.login(BREVO_SMTP_USER, BREVO_SMTP_PASS)
-            server.sendmail(BREVO_SMTP_USER, to_email, msg.as_string())
+            server.login(user, password)
+            server.sendmail(user, to_email, msg.as_string())
 
         return True
 
-    except smtplib.SMTPAuthenticationError:
-        print("ERROR: Brevo SMTP authentication failed. Check credentials.")
-        if os.getenv("APP_ENV") == "development":
-            print(f"[DEV MODE] OTP for {to_email}: {otp}")
-        return False
-
-    except smtplib.SMTPException as e:
-        print(f"ERROR: SMTP error — {str(e)}")
-        if os.getenv("APP_ENV") == "development":
-            print(f"[DEV MODE] OTP for {to_email}: {otp}")
-        return False
-
     except Exception as e:
-        print(f"ERROR: Failed to send OTP — {str(e)}")
-        # Always print to console in development fallback
-        print(f"[DEBUG FALLBACK] OTP for {to_email}: {otp}")
+        print(f"ERROR: SMTP failed — {str(e)}")
+        # If we are on Render, we MUST log the OTP so the user can find it in their dashboard logs
+        print(f"--- [RENDER OTP FALLBACK] ---")
+        print(f"OTP for {to_email}: {otp}")
+        print(f"-----------------------------")
         return False
 
 def generate_otp(email: str) -> str:
@@ -631,11 +625,12 @@ def register_request():
         otp = generate_otp(email)
         email_sent = send_otp_email(email, otp)
         
-        # If email fails, we check if we should allow progression anyway (for dev/demo)
+        # If email fails, we check if we should allow progression anyway (for dev/demo/render)
         is_dev = os.getenv("APP_ENV") == "development" or os.getenv("GEMINI_API_KEY") is None
+        is_render = os.getenv("RENDER") is not None
         
-        if not email_sent and not is_dev:
-            return jsonify({"success": False, "error": "Failed to send OTP email."}), 500
+        if not email_sent and not is_dev and not is_render:
+            return jsonify({"success": False, "error": "Failed to send OTP email. SMTP service unavailable."}), 500
             
         hashed_otp = generate_password_hash(otp)
         OTP_STORE[email] = {

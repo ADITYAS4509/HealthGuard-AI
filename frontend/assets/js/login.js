@@ -17,17 +17,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
     async function safeFetch(url, options = {}) {
         options.credentials = 'include';
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout
+        options.signal = controller.signal;
+
         try {
             const res = await fetch(url, options);
+            clearTimeout(timeoutId);
             let data = {};
             try { data = await res.json(); } catch (e) { }
             return { ok: res.ok, status: res.status, data };
         } catch (err) {
-            console.debug('[HG] Network request failed:', url);
+            clearTimeout(timeoutId);
+            console.debug('[HG] Network request failed:', url, err);
             return {
                 ok: false,
                 status: 0,
-                data: { success: false, error: 'Auth service is temporarily unavailable.' },
+                data: { success: false, error: err.name === 'AbortError' ? 'Request timed out.' : 'Service is temporarily unavailable.' },
                 networkError: true
             };
         }
