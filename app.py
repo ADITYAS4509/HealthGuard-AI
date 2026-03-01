@@ -1090,15 +1090,25 @@ def test_email():
     
     success, message = send_otp_email(test_dest, "DIAGNOSTIC-123456")
     
+    # Help user distinguish between SMTP Key and API Key
+    key_type = "UNKNOWN"
+    if api_key_raw:
+        if api_key_raw.startswith("xkeysib-"):
+            key_type = "API v3 Key (Correct)"
+        elif api_key_raw.startswith("xsmtpsib-"):
+            key_type = "SMTP Key (Wrong - generate API Key instead)"
+        else:
+            key_type = "Custom/Other"
+
     return jsonify({
         "success": success,
         "message": message,
         "diagnostics": {
             "api_key_detected": bool(api_key_raw),
-            "sender_detected": bool(sender_raw),
+            "key_type_detected": key_type,
             "is_render": bool(os.environ.get("RENDER")),
             "target": test_dest,
-            "possible_issue": "API key missing in Render Environment if api_key_detected is false."
+            "solution": "Generate a 'v3 API Key' starting with 'xkeysib-' in Brevo Settings." if "unauthorized" in message.lower() else "Check Render Environment Variables."
         }
     })
 
