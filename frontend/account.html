@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="HealthGuard - My Account Dashboard" />
+    <title>HealthGuard - My Account</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#060d1a" />
+</head>
+
+<body>
+    <!-- ===================== NOTIFICATION ===================== -->
+    <div class="notification" id="notification" role="alert">
+        <span id="notifIcon">✅</span>
+        <span id="notifMsg">Operation completed.</span>
+    </div>
+
+    <!-- ===================== NAVBAR ===================== -->
+    <nav class="navbar" role="navigation" aria-label="Main navigation">
+        <div class="navbar-inner">
+            <a href="index.html" class="navbar-brand">
+                <div class="brand-icon">🏥</div>
+                <span class="brand-text">Health<span>Guard</span></span>
+            </a>
+            <ul class="navbar-nav">
+                <li><a href="index.html" class="nav-cta"
+                        style="background:transparent;border:1px solid var(--clr-glass-border);color:var(--clr-text-muted);">←
+                        Back to Home</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background: var(--clr-bg);
+            background-image:
+                radial-gradient(circle at 15% 50%, rgba(0, 240, 255, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 85% 30%, rgba(93, 0, 255, 0.03) 0%, transparent 50%);
+        }
+
+        .auth-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+
+        .account-card {
+            width: 100%;
+            max-width: 600px;
+            padding: 2rem;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--clr-glass-border);
+        }
+
+        .profile-avatar {
+            font-size: 3rem;
+            width: 80px;
+            height: 80px;
+            background: var(--clr-bg-deep);
+            border: 1px solid var(--clr-glass-border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .profile-info h1 {
+            margin: 0 0 0.25rem 0;
+            font-size: 1.5rem;
+            color: var(--clr-text);
+        }
+
+        .profile-info p {
+            margin: 0;
+            color: var(--clr-text-muted);
+            font-size: 0.9rem;
+        }
+
+        .info-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 2rem 0;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .info-list li {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .info-label {
+            color: var(--clr-text-muted);
+            font-size: 0.9rem;
+        }
+
+        .info-value {
+            color: var(--clr-text);
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+    </style>
+
+    <style media="print">
+        /* ================================================================
+           CLINICAL PDF PRINT STYLES — Feature 4 & 5
+           A4 Portrait, 20mm margins, Arial/Helvetica body
+           ================================================================ */
+        @page {
+            size: A4 portrait;
+            margin: 20mm;
+        }
+
+        body>*:not(#pdfReport) {
+            display: none !important;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        #pdfReport {
+            display: block !important;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 11pt;
+            color: #111;
+            background: #fff;
+            position: relative;
+        }
+
+        /* ── Feature 5: Diagonal Watermark ── */
+        .pdf-watermark {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-35deg);
+            font-size: 36pt;
+            font-family: Arial, Helvetica, sans-serif;
+            color: rgba(0, 120, 200, 0.10);
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: 0;
+            letter-spacing: 0.05em;
+        }
+
+        /* ── Header ── */
+        .pdf-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 6pt;
+        }
+
+        .pdf-appname {
+            font-size: 9pt;
+            color: #1a56b0;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .pdf-title {
+            font-size: 20pt;
+            font-weight: bold;
+            font-family: Arial, Helvetica, sans-serif;
+            color: #0e1a2e;
+            text-align: center;
+            flex: 1;
+        }
+
+        .pdf-datetime {
+            font-size: 9pt;
+            color: #666;
+            text-align: right;
+            padding-top: 4pt;
+        }
+
+        .pdf-rule {
+            border: none;
+            border-top: 2px solid #1a56b0;
+            margin: 8pt 0 14pt;
+        }
+
+        /* ── Section Titles ── */
+        .pdf-section-title {
+            font-size: 14pt;
+            font-weight: bold;
+            font-family: Arial, Helvetica, sans-serif;
+            color: #0e1a2e;
+            border-bottom: 1px solid #ccc;
+            padding-bottom: 3pt;
+            margin: 16pt 0 8pt;
+        }
+
+        /* ── Info Tables ── */
+        .pdf-info-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10pt;
+        }
+
+        .pdf-info-table tr td {
+            font-size: 11pt;
+            padding: 3pt 6pt;
+            border-bottom: 1px solid #eee;
+            vertical-align: top;
+        }
+
+        .pdf-label {
+            color: #555;
+            font-weight: bold;
+            width: 38%;
+        }
+
+        /* ── Data Table (medicines) ── */
+        .pdf-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10pt;
+            font-size: 10pt;
+        }
+
+        .pdf-table th {
+            background: #f0f4fa;
+            text-align: left;
+            padding: 4pt 6pt;
+            font-weight: bold;
+            border: 1px solid #ccc;
+        }
+
+        .pdf-table td {
+            padding: 3pt 6pt;
+            border: 1px solid #ddd;
+            vertical-align: top;
+        }
+
+        /* ── Lists ── */
+        .pdf-list {
+            margin: 0 0 8pt 0;
+            padding-left: 18pt;
+        }
+
+        .pdf-list li {
+            font-size: 11pt;
+            line-height: 1.5;
+            margin-bottom: 2pt;
+        }
+
+        /* ── Risk Badge ── */
+        .pdf-risk-badge {
+            display: inline-block;
+            padding: 1pt 8pt;
+            border: 1.5px solid #333;
+            border-radius: 3pt;
+            font-weight: bold;
+            font-size: 11pt;
+        }
+
+        /* ── Explanation ── */
+        .pdf-explanation {
+            font-size: 11pt;
+            line-height: 1.6;
+            color: #222;
+        }
+
+        /* ── Notes ── */
+        .pdf-note {
+            font-size: 9pt;
+            color: #666;
+            font-style: italic;
+            margin-bottom: 6pt;
+        }
+
+        .pdf-na {
+            font-size: 10pt;
+            color: #888;
+        }
+
+        .pdf-emergency {
+            background: #fff0f0;
+            border-left: 3pt solid #dc2626;
+            padding: 5pt 8pt;
+            margin-top: 8pt;
+            font-size: 10pt;
+        }
+
+        /* ── Disclaimer ── */
+        .pdf-disclaimer {
+            margin-top: 20pt;
+            padding: 7pt 10pt;
+            border: 1px solid #bbb;
+            font-size: 9pt;
+            color: #555;
+            line-height: 1.4;
+        }
+
+        /* ── Feature 5: Version Footer ── */
+        .pdf-footer {
+            margin-top: 16pt;
+            font-size: 8pt;
+            color: #999;
+            text-align: center;
+            border-top: 1px solid #e0e0e0;
+            padding-top: 6pt;
+        }
+    </style>
+
+    <!-- Feature 6: Share with Doctor – Screen-only overlay styles -->
+    <style>
+        #modalOverlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.65);
+            z-index: 1000;
+        }
+
+        #shareModal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1001;
+            background: var(--clr-bg-card, #0c1929);
+            border: 1px solid var(--clr-glass-border, rgba(255, 255, 255, 0.1));
+            border-radius: 12px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        #shareModal h2 {
+            font-size: 1.1rem;
+            color: var(--clr-text, #f0f8ff);
+            margin: 0 0 0.5rem;
+        }
+
+        #shareModal p.modal-sub {
+            font-size: 0.8rem;
+            color: var(--clr-text-muted, #9ca3af);
+            margin: 0 0 1.5rem;
+        }
+
+        .modal-option {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .modal-option-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--clr-accent, #0ef);
+            margin-bottom: 0.4rem;
+        }
+
+        .modal-option p {
+            font-size: 0.8rem;
+            color: var(--clr-text-muted, #9ca3af);
+            margin: 0 0 0.75rem;
+        }
+
+        #shareSummaryText {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            color: var(--clr-text, #f0f8ff);
+            font-family: monospace;
+            font-size: 0.72rem;
+            padding: 0.5rem;
+            resize: vertical;
+            min-height: 100px;
+            margin-bottom: 0.5rem;
+        }
+
+        #btnCloseModal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: var(--clr-text-muted, #9ca3af);
+            font-size: 1.2rem;
+            cursor: pointer;
+            line-height: 1;
+        }
+    </style>
+
+    <main class="auth-container">
+        <div class="glass-card account-card">
+
+            <div class="profile-header">
+                <div class="profile-avatar">👤</div>
+                <div class="profile-info">
+                    <h1 id="accName">Loading...</h1>
+                    <p id="accUsername">@loading</p>
+                </div>
+            </div>
+
+            <ul class="info-list">
+                <li>
+                    <span class="info-label">Email Address</span>
+                    <span class="info-value" id="accEmail">Loading...</span>
+                </li>
+                <li>
+                    <span class="info-label">Session Status</span>
+                    <span class="info-value" style="color:var(--clr-success)">Active / Secure</span>
+                </li>
+                <li>
+                    <span class="info-label">Login Method</span>
+                    <span class="info-value">Email OTP</span>
+                </li>
+            </ul>
+
+            <div style="display:flex; gap:0.75rem; flex-direction: column;">
+                <button id="btnDownloadPDF" class="btn btn-outline btn-full"
+                    style="display:flex;align-items:center;justify-content:center;gap:0.6rem;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
+                        <polyline points="14 2 14 8 20 8" />
+                        <line x1="16" y1="13" x2="8" y2="13" />
+                        <line x1="16" y1="17" x2="8" y2="17" />
+                        <polyline points="10 9 9 9 8 9" />
+                    </svg>
+                    Download Assessment PDF
+                </button>
+                <button id="btnShareDoctor" class="btn btn-outline btn-full"
+                    style="display:flex;align-items:center;justify-content:center;gap:0.6rem;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="18" cy="5" r="3" />
+                        <circle cx="6" cy="12" r="3" />
+                        <circle cx="18" cy="19" r="3" />
+                        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+                        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+                    </svg>
+                    Share with Doctor
+                </button>
+                <button id="btnLogoutMain" class="btn btn-outline btn-full"
+                    style="color:var(--clr-critical); border-color:var(--clr-critical);">
+                    Logout Session
+                </button>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- PDF Report — hidden on screen, visible only when printing -->
+    <div id="pdfReport" style="display:none;"></div>
+
+    <!-- Modal Overlay (Feature 6) -->
+    <div id="modalOverlay"></div>
+
+    <!-- Share with Doctor Modal (Feature 6) -->
+    <div id="shareModal" role="dialog" aria-modal="true" aria-labelledby="shareModalTitle">
+        <button id="btnCloseModal" aria-label="Close">&times;</button>
+        <h2 id="shareModalTitle">Share with Doctor</h2>
+        <p class="modal-sub">Choose how to share your assessment summary. No data is transmitted automatically.</p>
+
+        <!-- Option 1: Download PDF -->
+        <div class="modal-option">
+            <div class="modal-option-label">Option 1 &mdash; Download PDF</div>
+            <p>Save a clinical-grade PDF to share manually with your doctor or specialist.</p>
+            <button id="btnShareDownloadPDF" class="btn btn-outline" style="width:100%;">
+                Download Assessment PDF
+            </button>
+        </div>
+
+        <!-- Option 2: Copy Summary Text -->
+        <div class="modal-option">
+            <div class="modal-option-label">Option 2 &mdash; Copy Secure Summary Text</div>
+            <p>Copy a plain-text summary (condition, risk, disclaimer) to paste into a message.</p>
+            <textarea id="shareSummaryText" readonly rows="6" aria-label="Assessment summary text"></textarea>
+            <button id="btnCopySummary" class="btn btn-outline" style="width:100%;">
+                Copy Summary to Clipboard
+            </button>
+        </div>
+
+        <!-- Option 3: Email -->
+        <div class="modal-option">
+            <div class="modal-option-label">Option 3 &mdash; Send via Email Client</div>
+            <p>Opens your default email app. No data is stored. No attachment by default.</p>
+            <button id="btnEmailDoctor" class="btn btn-outline" style="width:100%;">
+                Open in Email App
+            </button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,11 @@
+fever,cough,headache,nausea,chest_pain,sweating,shortness_of_breath,fatigue,sore_throat,runny_nose,disease
+1,1,0,0,0,0,0,1,1,1,common_cold
+0,1,1,0,0,0,0,1,0,1,flu
+1,1,0,0,1,1,1,0,0,0,pneumonia
+0,0,1,1,0,0,0,1,0,0,migraine
+1,0,0,1,0,0,0,1,0,0,gastroenteritis
+0,0,0,0,1,1,1,0,0,0,heart_attack
+1,1,1,0,0,0,0,1,0,0,flu
+0,1,0,0,0,0,0,1,1,1,common_cold
+1,0,1,1,0,0,0,1,0,0,migraine
+1,1,0,1,0,0,0,1,0,0,gastroenteritis

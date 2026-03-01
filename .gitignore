@@ -1,0 +1,30 @@
+# Environment variables
+.env
+brevo.env
+
+# Database
+users.db
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+env/
+venv/
+ENV/
+
+# OS specific
+.DS_Store
+Thumbs.db
+
+# AGENT Artifacts (Internal)
+.agents/
+stitch-skills/
+backend.log
+risk_results.txt
+*.pkl
+
+# Node
+node_modules/
+package-lock.json

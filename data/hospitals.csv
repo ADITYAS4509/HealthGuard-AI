@@ -1,0 +1,13 @@
+city,hospital_name,type,distance_km
+New York,General Hospital,general,2.5
+New York,Emergency Medical Center,emergency,1.0
+New York,City Health Clinic,general,3.0
+Los Angeles,LA General Hospital,general,4.0
+Los Angeles,Emergency Response Unit,emergency,2.0
+Los Angeles,Westside Clinic,general,5.0
+Chicago,Chicago General,general,3.5
+Chicago,Emergency Care Center,emergency,1.5
+Chicago,Northside Hospital,general,4.0
+Houston,Houston Medical Center,general,2.0
+Houston,Emergency Services,emergency,0.5
+Houston,South Hospital,general,3.0

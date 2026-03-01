@@ -1,0 +1,3 @@
+- backend/app.py: Flask backend (serves frontend static files)
+- frontend/: HTML/JS Dashboard
+- docs/: Design and API documentation
