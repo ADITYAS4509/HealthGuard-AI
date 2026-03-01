@@ -125,7 +125,6 @@ def send_otp_email(to_email, otp):
     # It must be a verified sender in your Brevo account. Usually the email used to sign up.
     user = os.environ.get("SENDER_EMAIL", os.environ.get("BREVO_SMTP_USER", os.environ.get("BREVO_SMTP_LOGIN")))
     if not user:
-        # Fallback to a common pattern if both are missing
         user = "noreply@healthguard.ai"
         
     password = os.environ.get("BREVO_SMTP_PASS", os.environ.get("BREVO_SMTP_KEY"))
@@ -145,22 +144,24 @@ def send_otp_email(to_email, otp):
                 "sender": {"name": "AI HealthGuard", "email": user},
                 "to": [{"email": to_email}],
                 "subject": "Your AI HealthGuard OTP Code",
-                "textContent": f"Your OTP for AI HealthGuard is: {otp}\nThis code expires in 10 minutes.\nIf you are on Render and see this in logs, use the code above."
+                "textContent": f"Your OTP for AI HealthGuard is: {otp}\nThis code expires in 10 minutes."
             }
             response = requests.post(url, headers=headers, json=payload, timeout=10)
             if response.status_code in [201, 200, 202]:
                 print(f"[API SUCCESS] OTP sent to {to_email}")
-                return True
+                return True, "API Success"
             else:
-                # Log detailed error for you to check in Render dashboard (Logs tab)
-                print(f"[API ERROR] {response.status_code}: {response.text}")
+                err = f"Brevo API Error {response.status_code}: {response.text}"
+                print(f"[API ERROR] {err}")
+                return False, err
         except Exception as e:
-            print(f"[API EXCEPTION] {str(e)}")
+            err = f"API Exception: {str(e)}"
+            print(f"[API EXCEPTION] {err}")
+            return False, err
 
     # --- METHOD 2: SMTP Fallback (Works on Localhost) ---
     if not user or not password:
-        print("[WARN] SMTP credentials missing. Registration will proceed but no email sent (unless API worked).")
-        return False
+        return False, "SMTP credentials missing and API Key not set."
 
     try:
         msg = MIMEMultipart()
@@ -176,14 +177,14 @@ def send_otp_email(to_email, otp):
             server.login(user, password)
             server.sendmail(user, to_email, msg.as_string())
         print(f"[SMTP SUCCESS] OTP sent to {to_email}")
-        return True
+        return True, "SMTP Success"
     except Exception as e:
-        # If both fail on Render, you MUST check the Render console for the code
-        print(f"[SMTP ERROR] {str(e)}")
+        err = f"SMTP Error: {str(e)}"
+        print(f"[SMTP ERROR] {err}")
         print(f"--- [RENDER EMERGENCY OTP LOG] ---")
         print(f"OTP for {to_email}: {otp}")
         print(f"----------------------------------")
-        return False
+        return False, err
 
 def generate_otp(email: str) -> str:
     otp = str(random.randint(100000, 999999))
@@ -648,14 +649,14 @@ def register_request():
 
         # Generate and Send OTP
         otp = generate_otp(email)
-        email_sent = send_otp_email(email, otp)
+        email_sent, email_err = send_otp_email(email, otp)
         
         # If email fails, we check if we should allow progression anyway (for dev/demo/render)
         is_dev = os.getenv("APP_ENV") == "development" or os.getenv("GEMINI_API_KEY") is None
         is_render = os.getenv("RENDER") is not None
         
         if not email_sent and not is_dev and not is_render:
-            return jsonify({"success": False, "error": "Failed to send OTP email. SMTP service unavailable."}), 500
+            return jsonify({"success": False, "error": f"Failed to send OTP. {email_err}"}), 500
             
         hashed_otp = generate_password_hash(otp)
         OTP_STORE[email] = {
@@ -670,8 +671,16 @@ def register_request():
             }
         }
         
-        msg = "OTP sent to your email successfully." if email_sent else "Registration started. If the email doesn't arrive in 30s, please check your Render logs for the code."
-        return jsonify({"success": True, "message": msg, "otp_sent": email_sent}), 200
+        # Build a helpful message
+        if email_sent:
+            msg = "OTP sent to your email successfully."
+        else:
+            msg = f"Registration started, but email service reported an error. Please check your Render logs for the code."
+            # In development or specific render cases, we can be even more transparent
+            if is_dev or is_render:
+                print(f"[DEBUG] Registration for {email} started. Email failed: {email_err}")
+
+        return jsonify({"success": True, "message": msg, "otp_sent": email_sent, "debug_err": email_err if is_render or is_dev else None}), 200
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
 
@@ -771,14 +780,14 @@ def forgot_password():
             return jsonify({"success": True, "message": "If this email exists, an OTP has been sent."}), 200
 
         otp = generate_otp(email)
-        email_sent = send_otp_email(email, otp)
+        email_sent, email_err = send_otp_email(email, otp)
         
         # In Render/Dev, allow progression even if email service has issues
         is_dev = os.getenv("APP_ENV") == "development" or os.getenv("GEMINI_API_KEY") is None
         is_render = os.getenv("RENDER") is not None
 
         if not email_sent and not is_dev and not is_render:
-            return jsonify({"success": False, "error": "Email service unavailable. Please check backend logs."}), 500
+            return jsonify({"success": False, "error": f"Email service unavailable. {email_err}"}), 500
 
         OTP_STORE[email] = {
             'hash': generate_password_hash(otp),
@@ -786,11 +795,15 @@ def forgot_password():
             'is_recovery': True
         }
         
-        msg = f"OTP sent to {mask_email(email)} successfully." if email_sent else f"Recovery started. If the email doesn't arrive in 30s, please check your Render logs for the code."
+        if email_sent:
+            msg = f"OTP sent to {mask_email(email)} successfully."
+        else:
+            msg = f"Recovery started, but email service reported an error. Please check your Render logs for the code."
+
         return jsonify({
             "success": True, 
             "message": msg,
-            "data": {"masked_email": mask_email(email), "otp_sent": email_sent}
+            "data": {"masked_email": mask_email(email), "otp_sent": email_sent, "debug_err": email_err if is_render or is_dev else None}
         }), 200
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500

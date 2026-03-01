@@ -277,9 +277,16 @@ document.addEventListener("DOMContentLoaded", () => {
             pendingRegEmail = payload.email;
             const otpMsg = document.getElementById('otpMessage');
             let successTxt = result.data.otp_sent ? `OTP sent to ${payload.email}` : `OTP ready for verification.`;
+
+            // If email failed but registration started (Render fallback), show the error detail
+            if (!result.data.otp_sent && result.data.debug_err) {
+                successTxt += `\n(Service Error: ${result.data.debug_err})`;
+            }
+
             if (otpMsg) {
-                otpMsg.textContent = successTxt;
+                otpMsg.innerText = successTxt; // Use innerText for newlines if needed
                 otpMsg.style.display = 'block';
+                otpMsg.style.color = result.data.otp_sent ? '#ffffff' : '#ffda6a'; // Warning color if fallback
             }
             if (el.registerForm) el.registerForm.style.display = 'none';
             if (el.registerOtpForm) el.registerOtpForm.style.display = 'block';
@@ -351,9 +358,17 @@ document.addEventListener("DOMContentLoaded", () => {
             pendingForgotEmail = email;
             const resetOtpMsg = document.getElementById('resetOtpMessage');
             const masked = result.data.data?.masked_email || email;
+            const otpSent = result.data.data?.otp_sent;
+            const debugErr = result.data.data?.debug_err;
+
             if (resetOtpMsg) {
-                resetOtpMsg.textContent = `OTP has been sent to ${masked}`;
+                let msg = `OTP has been sent to ${masked}`;
+                if (!otpSent && debugErr) {
+                    msg = `Recovery started. (Service Error: ${debugErr})`;
+                }
+                resetOtpMsg.innerText = msg;
                 resetOtpMsg.style.display = 'block';
+                resetOtpMsg.style.color = otpSent ? '#ffffff' : '#ffda6a';
             }
 
             if (el.forgotPassRequestForm) el.forgotPassRequestForm.style.display = 'none';
