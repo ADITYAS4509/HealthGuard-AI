@@ -1605,17 +1605,24 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    if (navAuthContainer) {
-        navAuthContainer.addEventListener('mouseenter', () => {
-            // Only show dropdown if it's not a generic login link
-            if (navUserDropdown && navLoginBtn && navLoginBtn.getAttribute('href') === '#') {
-                navUserDropdown.style.display = 'flex';
+    if (navLoginBtn) {
+        navLoginBtn.addEventListener('click', (e) => {
+            // Only toggle if it's a dropdown toggle link (href='#')
+            if (navLoginBtn.getAttribute('href') === '#') {
+                e.preventDefault();
+                if (navUserDropdown) {
+                    navUserDropdown.style.display = (navUserDropdown.style.display === 'flex') ? 'none' : 'flex';
+                }
             }
         });
-        navAuthContainer.addEventListener('mouseleave', () => {
-            if (navUserDropdown) navUserDropdown.style.display = 'none';
-        });
     }
+
+    // Close dropdown on outside click
+    document.addEventListener('click', (e) => {
+        if (navUserDropdown && !e.target.closest('#navAuthContainer')) {
+            navUserDropdown.style.display = 'none';
+        }
+    });
 
     function checkAuthState() {
         const sessionStore = localStorage.getItem('hg_user_session');
