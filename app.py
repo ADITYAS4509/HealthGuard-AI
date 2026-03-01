@@ -117,14 +117,39 @@ OTP_STORE = {}
 
 def send_otp_email(to_email, otp):
     # Consolidate config names
+    brevo_api_key = os.environ.get("BREVO_API_KEY") # NEW: Best for Render
     host = os.environ.get("BREVO_SMTP_SERVER", os.environ.get("SMTP_SERVER", "smtp-relay.brevo.com"))
     port = int(os.environ.get("BREVO_SMTP_PORT", 587))
     user = os.environ.get("BREVO_SMTP_USER", os.environ.get("BREVO_SMTP_LOGIN", os.environ.get("SENDER_EMAIL")))
     password = os.environ.get("BREVO_SMTP_PASS", os.environ.get("BREVO_SMTP_KEY"))
 
+    # --- METHOD 1: Brevo HTTP API (Recommended for Render) ---
+    if brevo_api_key:
+        try:
+            url = "https://api.brevo.com/v3/smtp/email"
+            headers = {
+                "accept": "application/json",
+                "content-type": "application/json",
+                "api-key": brevo_api_key
+            }
+            payload = {
+                "sender": {"name": "AI HealthGuard", "email": user},
+                "to": [{"email": to_email}],
+                "subject": "Your AI HealthGuard OTP Code",
+                "textContent": f"Your OTP for AI HealthGuard is: {otp}\nExpires in 10 minutes."
+            }
+            response = requests.post(url, headers=headers, json=payload, timeout=10)
+            if response.status_code in [201, 200, 202]:
+                print(f"[API] OTP successfully sent to {to_email}")
+                return True
+            else:
+                print(f"[API ERROR] Status: {response.status_code}, Body: {response.text}")
+        except Exception as e:
+            print(f"[API EXCEPTION] {str(e)}")
+
+    # --- METHOD 2: SMTP Fallback (Works on Localhost, usually blocked on Render) ---
     if not user or not password:
-        print("ERROR: SMTP credentials missing. Please check your environment variables.")
-        # Fallback to logging the OTP if we are in dev or on Render (where SMTP is notoriously blocked)
+        print("ERROR: SMTP/API credentials missing. Check environment variables.")
         if os.getenv("APP_ENV") == "development" or os.getenv("RENDER"):
             print(f"[FALLBACK LOG] OTP for {to_email}: {otp}")
         return False
@@ -135,15 +160,9 @@ def send_otp_email(to_email, otp):
         msg["To"] = to_email
         msg["Subject"] = "Your AI HealthGuard OTP Code"
 
-        body = f"""
-        Your OTP for AI HealthGuard is: {otp}
-        This code expires in 10 minutes.
-        If you are seeing this in server logs (Render), use the code above to verify.
-        """
+        body = f"Your OTP for AI HealthGuard is: {otp}\nThis code expires in 10 minutes."
         msg.attach(MIMEText(body, "plain"))
 
-        # Render explicitly blocks port 587 and 465. 
-        # We use a 10s timeout to prevent the entire app from hanging when Render blocks the connection.
         with smtplib.SMTP(host, port, timeout=10) as server:
             server.ehlo()
             server.starttls()
