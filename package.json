@@ -2,6 +2,7 @@
     "name": "healthguard",
     "version": "1.0.0",
     "description": "AI HealthGuard Application",
+    "author": "Aditya Shukla <adityashukla4509@gmail.com>",
     "scripts": {
         "dev": "echo \"Serving frontend via backend static folder.\"",
         "start:backend": "set PORT=8000&& python backend/app.py",
