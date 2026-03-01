@@ -121,91 +121,79 @@ def send_otp_email(to_email, otp):
     Sends OTP via Brevo API or SMTP.
     Returns (success_bool, status_message)
     """
-    # 1. Environment Detection
-    api_key = os.environ.get("BREVO_API_KEY", "").strip()
-    smtp_host = os.environ.get("BREVO_SMTP_SERVER", "smtp-relay.brevo.com")
-    smtp_port = int(os.environ.get("BREVO_SMTP_PORT", 587))
-    sender_user = os.environ.get("SENDER_EMAIL", os.environ.get("BREVO_SMTP_USER", os.environ.get("BREVO_SMTP_LOGIN")))
-    smtp_pass = os.environ.get("BREVO_SMTP_PASS", os.environ.get("BREVO_SMTP_KEY"))
-
-    print(f"--- [DEBUG OTP START] ---")
-    print(f"Target: {to_email}")
-    print(f"BREVO_API_KEY Set: {'YES (' + api_key[:4] + '...)' if api_key else 'NO'}")
-    print(f"SENDER_EMAIL Set: {'YES (' + sender_user + ')' if sender_user else 'NO (Fallback to noreply)'}")
-    print(f"SMTP Credentials: {'YES' if (sender_user and smtp_pass) else 'NO'}")
-
-    # --- STRATEGY: API ALWAYS on Render/Cloud, SMTP only if API_KEY missing ---
-    
-    # METHOD A: BREVO WEB API (Port 443 - Recommended)
-    if api_key and len(api_key) > 10:
-        print("[CHOICE] Using Brevo HTTP API")
-        try:
-            url = "https://api.brevo.com/v3/smtp/email"
-            headers = {
-                "accept": "application/json",
-                "content-type": "application/json",
-                "api-key": api_key
-            }
-            # The sender email MUST be verified in Brevo
-            from_email = sender_user if sender_user else "noreply@healthguard.ai"
-            
-            payload = {
-                "sender": {"name": "AI HealthGuard", "email": from_email},
-                "to": [{"email": to_email}],
-                "subject": "Your AI HealthGuard OTP Code",
-                "textContent": f"Your OTP for AI HealthGuard is: {otp}\nExpires in 10 minutes.\n\nNote: If you are seeing this in server logs, the email was sent via API but might be delayed or in Spam."
-            }
-            
-            response = requests.post(url, headers=headers, json=payload, timeout=12)
-            if response.status_code in [201, 200, 202]:
-                print(f"[API SUCCESS] Status: {response.status_code}")
-                return True, "Email sent via API successfully."
-            else:
-                err_msg = f"Brevo API rejected: {response.status_code} - {response.text}"
-                print(f"[API FAIL] {err_msg}")
-                # We do NOT fallback to SMTP if API key was present but failed (prevents port-blocking noise)
-                return False, err_msg
-                
-        except Exception as e:
-            err_msg = f"API Request Exception: {str(e)}"
-            print(f"[API EXCEPTION] {err_msg}")
-            return False, err_msg
-
-    # METHOD B: SMTP (Port 587 - Likely to fail on Render, works locally)
-    print("[CHOICE] Falling back to SMTP (API Key missing or invalid)")
-    if not sender_user or not smtp_pass:
-        msg = "Missing both API Key and SMTP credentials."
-        print(f"[SMTP FAIL] {msg}")
-        # Final emergency log so registration can proceed
-        print(f"--- [EMERGENCY OTP LOG] ---")
-        print(f"OTP for {to_email}: {otp}")
-        print(f"---------------------------")
-        return False, msg
-
     try:
-        msg = MIMEMultipart()
-        msg["From"] = sender_user
-        msg["To"] = to_email
-        msg["Subject"] = "Your AI HealthGuard OTP Code"
-        body = f"Your OTP for AI HealthGuard is: {otp}\nThis code expires in 10 minutes."
-        msg.attach(MIMEText(body, "plain"))
+        # 1. Environment Detection
+        api_key = (os.environ.get("BREVO_API_KEY") or "").strip()
+        smtp_host = os.environ.get("BREVO_SMTP_SERVER", "smtp-relay.brevo.com")
+        smtp_port = int(os.environ.get("BREVO_SMTP_PORT", 587))
+        sender_user = os.environ.get("SENDER_EMAIL") or os.environ.get("BREVO_SMTP_USER") or os.environ.get("BREVO_SMTP_LOGIN")
+        smtp_pass = os.environ.get("BREVO_SMTP_PASS") or os.environ.get("BREVO_SMTP_KEY")
 
-        with smtplib.SMTP(smtp_host, smtp_port, timeout=10) as server:
-            server.ehlo()
-            server.starttls()
-            server.login(sender_user, smtp_pass)
-            server.sendmail(sender_user, to_email, msg.as_string())
-            
-        print(f"[SMTP SUCCESS] OTP sent to {to_email}")
-        return True, "Email sent via SMTP successfully."
+        print(f"--- [DEBUG OTP START] ---")
+        print(f"Target: {to_email}")
         
+        # METHOD A: BREVO WEB API (Port 443)
+        if api_key and len(api_key) > 10:
+            print("[CHOICE] Using Brevo HTTP API")
+            try:
+                url = "https://api.brevo.com/v3/smtp/email"
+                headers = {
+                    "accept": "application/json",
+                    "content-type": "application/json",
+                    "api-key": api_key
+                }
+                from_email = sender_user if sender_user else "noreply@healthguard.ai"
+                
+                payload = {
+                    "sender": {"name": "AI HealthGuard", "email": from_email},
+                    "to": [{"email": to_email}],
+                    "subject": "Your AI HealthGuard OTP Code",
+                    "textContent": f"Your OTP for AI HealthGuard is: {otp}\nExpires in 10 minutes."
+                }
+                
+                response = requests.post(url, headers=headers, json=payload, timeout=12)
+                if response.status_code in [201, 200, 202]:
+                    return True, "Email sent via API successfully."
+                else:
+                    return False, f"Brevo API Error {response.status_code}: {response.text}"
+            except Exception as e:
+                return False, f"API Exception: {str(e)}"
+
+        # METHOD B: SMTP Fallback
+        if not sender_user or not smtp_pass:
+            # Emergency log
+            print(f"--- [EMERGENCY OTP LOG] ---")
+            print(f"OTP for {to_email}: {otp}")
+            print(f"---------------------------")
+            return False, "Missing API Key and SMTP credentials. Code logged to console."
+
+        # Skip SMTP on Render to avoid noise if we know it fails
+        if os.environ.get("RENDER"):
+            print(f"[RENDER] Skipping SMTP fallback to avoid port-block error.")
+            print(f"--- [RENDER EMERGENCY OTP LOG] ---")
+            print(f"OTP for {to_email}: {otp}")
+            print(f"----------------------------------")
+            return False, "SMTP blocked on Render. Use BREVO_API_KEY."
+
+        try:
+            msg = MIMEMultipart()
+            msg["From"] = sender_user
+            msg["To"] = to_email
+            msg["Subject"] = "Your AI HealthGuard OTP Code"
+            body = f"Your OTP for AI HealthGuard is: {otp}"
+            msg.attach(MIMEText(body, "plain"))
+
+            with smtplib.SMTP(smtp_host, smtp_port, timeout=10) as server:
+                server.starttls()
+                server.login(sender_user, smtp_pass)
+                server.sendmail(sender_user, to_email, msg.as_string())
+            return True, "Email sent via SMTP."
+        except Exception as e:
+            return False, f"SMTP Error: {str(e)}"
+            
     except Exception as e:
-        err_msg = f"SMTP Error: {str(e)}"
-        print(f"[SMTP ERROR] {err_msg}")
-        print(f"--- [RENDER EMERGENCY OTP LOG] ---")
-        print(f"OTP for {to_email}: {otp}")
-        print(f"----------------------------------")
-        return False, err_msg
+        print(f"[CRITICAL OTP ERR] {str(e)}")
+        return False, f"Critical internal error: {str(e)}"
 
 def generate_otp(email: str) -> str:
     otp = str(random.randint(100000, 999999))
@@ -1077,25 +1065,26 @@ def verify_otp():
 @app.route('/auth/test-email', methods=['GET'])
 def test_email():
     """Diagnostic tool to verify email configuration"""
-    try:
-        # We'll use the core function to test, as it now has full diagnostics
-        test_dest = os.environ.get("SENDER_EMAIL")
-        if not test_dest:
-             test_dest = os.environ.get("BREVO_SMTP_USER", os.environ.get("BREVO_SMTP_LOGIN", "test@example.com"))
-        
-        success, message = send_otp_email(test_dest, "DIAGNOSTIC-123456")
-        
-        return jsonify({
-            "success": success,
-            "message": message,
-            "target_used": test_dest,
-            "env_api_key_present": bool(os.environ.get("BREVO_API_KEY")),
-            "env_sender_present": bool(os.environ.get("SENDER_EMAIL")),
-            "note": "If success is false, check your Render Env Vars for typos or unverified sender."
-        })
-    except Exception as e:
-        print(f"[DIAGNOSTIC ERR] {str(e)}")
-        return jsonify({"success": False, "error": str(e)})
+    # NO TRY/EXCEPT here, let's see where it actually blows up if it does
+    api_key_raw = os.environ.get("BREVO_API_KEY")
+    sender_raw = os.environ.get("SENDER_EMAIL")
+    smtp_user_raw = os.environ.get("BREVO_SMTP_USER")
+    
+    test_dest = sender_raw or smtp_user_raw or "test@example.com"
+    
+    # Force run the function and capture output
+    success, message = send_otp_email(test_dest, "DIAGNOSTIC-123456")
+    
+    return jsonify({
+        "success": success,
+        "message": message,
+        "diagnostics": {
+            "api_key_detected": bool(api_key_raw),
+            "sender_detected": bool(sender_raw),
+            "is_render": bool(os.environ.get("RENDER")),
+            "target": test_dest
+        }
+    })
 
 @app.route('/auth/session', methods=['GET'])
 def get_session():
