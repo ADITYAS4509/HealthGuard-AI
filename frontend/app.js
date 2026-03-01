@@ -473,13 +473,6 @@ function analyzeHealth() {
                 if (analyzeBtn) analyzeBtn.disabled = false;
 
                 showNotif("Backend unavailable. Please check server connection.", "error");
-
-                // Populate debug panel even on error (Requirement #9)
-                document.getElementById('debugPanel').style.display = 'block';
-                document.getElementById('debugStatus').textContent = "ERROR";
-                document.getElementById('debugSource').textContent = "NONE";
-                document.getElementById('debugEngine').textContent = "CONNECTION_FAILED";
-                document.getElementById('debugReason').textContent = error.message;
             }
         };
 
@@ -568,17 +561,6 @@ function renderResults(result) {
         `).join('');
     } else if (multiContainer) {
         multiContainer.style.display = 'none';
-    }
-
-    // Requirement #9: Debug Panel Population
-    const debugPanel = document.getElementById('debugPanel');
-    if (debugPanel && result.debug) {
-        debugPanel.style.display = 'block';
-        document.getElementById('debugStatus').textContent = result.debug.status || "OK";
-        document.getElementById('debugStatus').style.color = result.debug.status === 'success' ? '#4ade80' : '#f87171';
-        document.getElementById('debugSource').textContent = result.debug.source || "Unknown";
-        document.getElementById('debugEngine').textContent = result.debug.api || "NONE";
-        document.getElementById('debugReason').textContent = result.debug.fallback_reason || "None";
     }
 
     // Remove Confidence Bar references entirely for clinical safety
