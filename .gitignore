@@ -3,7 +3,7 @@
 brevo.env
 
 # Database
-users.db
+# users.db (Synced for production)
 
 # Python
 __pycache__/
