@@ -23,7 +23,6 @@ Thumbs.db
 stitch-skills/
 backend.log
 risk_results.txt
-*.pkl
 
 # Node
 node_modules/
