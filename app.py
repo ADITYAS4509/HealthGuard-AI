@@ -180,7 +180,17 @@ try:
     feature_path = os.path.join(os.path.dirname(__file__), 'models', 'features.pkl')
     features = joblib.load(feature_path)
 except Exception as pkl_err:
-    print(f"[WARN] ML models not loaded: {pkl_err}. Prediction endpoint will return fallback.")
+    try:
+        current_dir = os.getcwd()
+        models_dir = os.path.join(os.path.dirname(__file__), 'models')
+        models_contents = os.listdir(models_dir) if os.path.exists(models_dir) else "DIR NOT FOUND"
+        print(f"[ERROR] Detailed ML failure: {pkl_err}")
+        print(f"CWD: {current_dir}")
+        print(f"Models Dir: {models_dir}")
+        print(f"Contents: {models_contents}")
+    except Exception as inner_err:
+        print(f"Failed to even log debug info: {inner_err}")
+    print(f"[WARN] ML models not loaded. Prediction endpoint will return fallback.")
 
 @app.route('/health', methods=['GET'])
 def health_check():
