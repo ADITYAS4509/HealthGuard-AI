@@ -129,8 +129,11 @@ def send_otp_email(to_email, otp):
     Returns (success_bool, status_message)
     """
     try:
-        # 1. Environment Detection
-        api_key = (os.environ.get("BREVO_API_KEY") or "").strip()
+        # 1. Environment Detection (Multiple Fallbacks for Resilience)
+        api_key = (os.environ.get("BREVO_API_KEY") or 
+                   os.environ.get("BREVO_V3_KEY") or 
+                   os.environ.get("BREVO_API_V3_KEY") or "").strip()
+        
         smtp_host = os.environ.get("BREVO_SMTP_SERVER", "smtp-relay.brevo.com")
         smtp_port = int(os.environ.get("BREVO_SMTP_PORT", 587))
         sender_user = os.environ.get("SENDER_EMAIL") or os.environ.get("BREVO_SMTP_USER") or os.environ.get("BREVO_SMTP_LOGIN")
@@ -1072,14 +1075,15 @@ def verify_otp():
 @app.route('/auth/test-email', methods=['GET'])
 def test_email():
     """Diagnostic tool to verify email configuration"""
-    # NO TRY/EXCEPT here, let's see where it actually blows up if it does
-    api_key_raw = os.environ.get("BREVO_API_KEY")
+    api_key_raw = (os.environ.get("BREVO_API_KEY") or 
+                   os.environ.get("BREVO_V3_KEY") or 
+                   os.environ.get("BREVO_API_V3_KEY"))
+    
     sender_raw = os.environ.get("SENDER_EMAIL")
-    smtp_user_raw = os.environ.get("BREVO_SMTP_USER")
+    smtp_user_raw = os.environ.get("BREVO_SMTP_USER") or os.environ.get("BREVO_SMTP_LOGIN")
     
     test_dest = sender_raw or smtp_user_raw or "test@example.com"
     
-    # Force run the function and capture output
     success, message = send_otp_email(test_dest, "DIAGNOSTIC-123456")
     
     return jsonify({
@@ -1089,7 +1093,8 @@ def test_email():
             "api_key_detected": bool(api_key_raw),
             "sender_detected": bool(sender_raw),
             "is_render": bool(os.environ.get("RENDER")),
-            "target": test_dest
+            "target": test_dest,
+            "possible_issue": "API key missing in Render Environment if api_key_detected is false."
         }
     })
 
