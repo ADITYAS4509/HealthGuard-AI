@@ -1101,7 +1101,7 @@ def chat():
              return jsonify({'reply': reply, 'status': 'demo_fallback'})
 
         # HealthGuard AI - Backend
-        # Render Deployment Sync: 2026-03-01 19:61
+        # Render Deployment Sync: 2026-03-01 20:04 (RE-SYNC)
         SYSTEM_PROMPT = """You are HealthGuard AI, a knowledgeable and compassionate medical information assistant.
 Explain symptoms, diseases, and conditions in clear language. Provide prevention tips and general management strategies.
 Use **bold** for important terms and bullet points for lists. Never provide a personal diagnosis.
