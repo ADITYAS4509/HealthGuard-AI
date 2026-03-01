@@ -866,25 +866,28 @@ def send_otp():
         otp = generate_otp(email)
         
         # Attempt email dispatch
-        email_sent = send_otp_email(email, otp)
-        demo_mode = False
+        email_sent, email_err = send_otp_email(email, otp)
         
-        if not email_sent:
-            return jsonify({"success": False, "error": "Failed to send OTP email."}), 500
+        is_dev = os.getenv("APP_ENV") == "development" or os.getenv("GEMINI_API_KEY") is None
+        is_render = os.getenv("RENDER") is not None
+
+        if not email_sent and not is_dev and not is_render:
+            return jsonify({"success": False, "error": f"Failed to send OTP. {email_err}"}), 500
             
         hashed_otp = generate_password_hash(otp)
         OTP_STORE[email] = {
             'hash': hashed_otp,
-            'expires_at': current_time + 300,
+            'expires_at': current_time + 600,
             'last_sent': current_time,
             'resend_count': 1,
             'attempts': 0
         }
         
+        msg = "OTP sent to your email" if email_sent else "Verification started. Check Render logs for the code."
         return jsonify({
             "success": True, 
-            "data": {"demo_mode": False},
-            "message": "OTP sent to your email"
+            "data": {"otp_sent": email_sent, "debug_err": email_err if is_render or is_dev else None},
+            "message": msg
         }), 200
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
@@ -940,23 +943,27 @@ def resend_otp():
             }), 429
             
         otp = generate_otp(email)
+        email_sent, email_err = send_otp_email(email, otp)
         
-        email_sent = send_otp_email(email, otp)
-        demo_mode = False
-        
-        if not email_sent:
-            return jsonify({"success": False, "error": "Failed to send OTP email."}), 500
+        is_dev = os.getenv("APP_ENV") == "development" or os.getenv("GEMINI_API_KEY") is None
+        is_render = os.getenv("RENDER") is not None
+
+        if not email_sent and not is_dev and not is_render:
+            return jsonify({"success": False, "error": f"Failed to resend OTP. {email_err}"}), 500
 
         hashed_otp = generate_password_hash(otp)
-        existing['hash'] = hashed_otp
-        existing['last_sent'] = current_time
-        existing['resend_count'] += 1
-        existing['expires_at'] = current_time + 300
+        OTP_STORE[email].update({
+            'hash': hashed_otp,
+            'last_sent': current_time,
+            'resend_count': resend_count + 1,
+            'expires_at': current_time + 600
+        })
         
+        msg = "OTP resent successfully." if email_sent else "OTP resent. Check Render logs for the code."
         return jsonify({
-            "success": True, 
-            "data": {"demo_mode": False},
-            "message": "A new OTP has been sent."
+            "success": True,
+            "data": {"otp_sent": email_sent, "debug_err": email_err if is_render or is_dev else None},
+            "message": msg
         }), 200
     except Exception as e:
         return jsonify({"success": False, "error": str(e)}), 500
@@ -1062,48 +1069,55 @@ def test_email():
                 "content-type": "application/json",
                 "api-key": brevo_api_key
             }
+            # Use same sender logic as send_otp_email
+            sender = os.environ.get("SENDER_EMAIL", os.environ.get("BREVO_SMTP_USER", os.environ.get("BREVO_SMTP_LOGIN")))
+            if not sender: sender = "noreply@healthguard.ai"
+
             payload = {
-                "sender": {"name": "AI HealthGuard Test", "email": sender_email},
-                "to": [{"email": sender_email}],
+                "sender": {"name": "AI HealthGuard Diagnostic", "email": sender},
+                "to": [{"email": sender}], # Send to self for verification
                 "subject": "AI HealthGuard - Brevo API Diagnostic",
-                "textContent": "This is a test email sent via the Brevo HTTP API to verify your configuration on Render."
+                "textContent": f"Verification successful! API Key is valid. Currently using sender: {sender}"
             }
             response = requests.post(url, headers=headers, json=payload, timeout=10)
             if response.status_code in [201, 200, 202]:
                 return jsonify({
                     "success": True,
                     "method": "API",
-                    "message": "Brevo HTTP API is working correctly. OTPs should be delivered successfully."
+                    "sender_used": sender,
+                    "message": "Brevo HTTP API is working correctly. If you don't receive this email, check your Spam or account status on Brevo."
                 })
             else:
                 return jsonify({
                     "success": False,
                     "method": "API",
-                    "error": response.text,
-                    "status_code": response.status_code
+                    "sender_used": sender,
+                    "status_code": response.status_code,
+                    "error_log": response.text,
+                    "solution": "Ensure this SENDER email is verified in your Brevo dashboard."
                 })
 
         # Method 2: SMTP Test
-        if not smtp_login or not smtp_key or 'your_' in smtp_login:
-            return jsonify({
-                "success": False,
-                "error": "Credentials missing or are raw templates."
-            })
+        user = os.environ.get("SENDER_EMAIL", os.environ.get("BREVO_SMTP_USER", os.environ.get("BREVO_SMTP_LOGIN")))
+        password = os.environ.get("BREVO_SMTP_PASS", os.environ.get("BREVO_SMTP_KEY"))
+        
+        if not user or not password:
+            return jsonify({"success": False, "error": "No API Key AND no SMTP credentials found."})
             
-        msg = MIMEText("This is a test email to verify SMTP functionality.")
+        msg = MIMEText("SMTP Diagnostic Test")
         msg['Subject'] = 'AI HealthGuard - SMTP Diagnostic'
-        msg['From'] = sender_email
-        msg['To'] = sender_email
+        msg['From'] = user
+        msg['To'] = user
         
         server = smtplib.SMTP(smtp_server, smtp_port, timeout=10)
         server.starttls()
-        server.login(smtp_login, smtp_key)
+        server.login(user, password)
         server.send_message(msg)
         server.quit()
         return jsonify({
             "success": True,
             "method": "SMTP",
-            "message": "SMTP is working properly."
+            "message": "SMTP connection successful."
         })
     except Exception as e:
         return jsonify({
