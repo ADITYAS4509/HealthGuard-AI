@@ -177,7 +177,7 @@ const $$ = (sel, ctx = document) => [...ctx.querySelectorAll(sel)];
 
 // FIX 1: Backend Availability Check
 async function checkBackendHealth() {
-    const API_BASE = window.VITE_API_URL || 'http://localhost:8000';
+    const API_BASE = window.VITE_API_URL || ' https://healthguard-ai-23pi.onrender.com';
     try {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 3000);
