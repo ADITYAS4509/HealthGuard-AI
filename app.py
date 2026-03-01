@@ -129,10 +129,12 @@ def send_otp_email(to_email, otp):
     Returns (success_bool, status_message)
     """
     try:
-        # 1. Environment Detection (Multiple Fallbacks for Resilience)
+        # 1. Environment Detection (Extreme Resilience for Naming)
         api_key = (os.environ.get("BREVO_API_KEY") or 
                    os.environ.get("BREVO_V3_KEY") or 
-                   os.environ.get("BREVO_API_V3_KEY") or "").strip()
+                   os.environ.get("BREVO_API_V3_KEY") or
+                   os.environ.get("BREVO_SMTP_KEY") or
+                   os.environ.get("BREVO_SMTP_PASS") or "").strip()
         
         smtp_host = os.environ.get("BREVO_SMTP_SERVER", "smtp-relay.brevo.com")
         smtp_port = int(os.environ.get("BREVO_SMTP_PORT", 587))
@@ -1077,7 +1079,9 @@ def test_email():
     """Diagnostic tool to verify email configuration"""
     api_key_raw = (os.environ.get("BREVO_API_KEY") or 
                    os.environ.get("BREVO_V3_KEY") or 
-                   os.environ.get("BREVO_API_V3_KEY"))
+                   os.environ.get("BREVO_API_V3_KEY") or
+                   os.environ.get("BREVO_SMTP_KEY") or
+                   os.environ.get("BREVO_SMTP_PASS"))
     
     sender_raw = os.environ.get("SENDER_EMAIL")
     smtp_user_raw = os.environ.get("BREVO_SMTP_USER") or os.environ.get("BREVO_SMTP_LOGIN")
