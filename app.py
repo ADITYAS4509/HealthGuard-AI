@@ -71,8 +71,13 @@ app = Flask(__name__,
             static_folder='frontend', 
             static_url_path='')
 app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'ai_healthguard_secret_dev_key')
-CORS(app, origins=["https://healthguard-ai-23pi.onrender.com", "http://localhost:5173", "http://localhost:3000", "http://localhost:8000", "http://127.0.0.1:8000"], supports_credentials=True)
-
+CORS(app, origins=[
+    "http://localhost:5173",
+    "http://localhost:3000", 
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+    "https://healthguard-ai-23pi.onrender.com"
+], supports_credentials=True)
 @app.after_request
 def add_header(r):
     """
