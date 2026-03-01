@@ -37,6 +37,7 @@ try:
         rapid_key = os.environ.get("RAPIDAPI_KEY")
         rapid_host = os.environ.get("RAPIDAPI_HOST")
         gemini_key = os.environ.get("GEMINI_API_KEY")
+        brevo_key = os.environ.get("BREVO_API_KEY")
         openai_key = os.environ.get("OPENAI_API_KEY")
         
         if rapid_key:
@@ -55,6 +56,12 @@ try:
             print(f" [PASS] GEMINI_API_KEY: {masked}", flush=True)
         else:
             print(" [INFO] GEMINI_API_KEY is missing (Chatbot offline)", flush=True)
+
+        if brevo_key:
+            masked = f"{brevo_key[:4]}...{brevo_key[-4:]}"
+            print(f" [PASS] BREVO_API_KEY: {masked}", flush=True)
+        else:
+            print(" [FAIL] BREVO_API_KEY is missing! (Email service offline)", flush=True)
 
         print("="*40 + "\n", flush=True)
         
