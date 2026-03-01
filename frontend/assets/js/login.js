@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     // Shared Utils
     // Shared Utils
-    const BACKEND_URL = window.VITE_API_URL || 'https://healthguard-ai-23pi.onrender.com';
+    const BACKEND_URL = window.VITE_API_URL || '';
     const API_BASE = BACKEND_URL + '/auth';
     const notifMsg = document.getElementById('notifMsg');
     const notifIcon = document.getElementById('notifIcon');

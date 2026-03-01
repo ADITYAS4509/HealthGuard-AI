@@ -177,7 +177,7 @@ const $$ = (sel, ctx = document) => [...ctx.querySelectorAll(sel)];
 
 // FIX 1: Backend Availability Check
 async function checkBackendHealth() {
-    const API_BASE = window.VITE_API_URL || 'https://healthguard-ai-23pi.onrender.com';
+    const API_BASE = window.VITE_API_URL || '';
     try {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 3000);
@@ -441,7 +441,7 @@ function analyzeHealth() {
         }
 
         // FIX 2 & 5: Centralized API_BASE and Graceful Error Handling
-        const API_BASE = window.VITE_API_URL || 'https://healthguard-ai-23pi.onrender.com';
+        const API_BASE = window.VITE_API_URL || '';
 
         const analyzeSymptoms = async () => {
             try {
@@ -1556,7 +1556,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const authRegisterForm = document.getElementById('authRegisterForm');
 
     // Shared Utils
-    const BACKEND_URL = window.VITE_API_URL || 'https://healthguard-ai-23pi.onrender.com';
+    const BACKEND_URL = window.VITE_API_URL || '';
     const API_BASE = BACKEND_URL + '/auth';
 
     // Helper for initSession robust fetch

@@ -3,7 +3,7 @@
  * My Account page logic: profile, PDF download (F4/F5), Share with Doctor (F6)
  */
 document.addEventListener("DOMContentLoaded", () => {
-    const BACKEND_URL = window.VITE_API_URL || 'https://healthguard-ai-23pi.onrender.com';
+    const BACKEND_URL = window.VITE_API_URL || '';
     const API_BASE = BACKEND_URL + '/auth';
 
     // ── Auth Check ────────────────────────────────────────────────────────────
