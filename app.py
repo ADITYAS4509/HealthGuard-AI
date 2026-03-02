@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify, session
+from flask import Flask, render_template
 from flask_cors import CORS
 import joblib
 import pandas as pd
@@ -78,6 +79,9 @@ except Exception as e:
 app = Flask(__name__, 
             static_folder='frontend', 
             static_url_path='')
+@app.route("/")
+def home():
+    return render_template("index.html")
 app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'ai_healthguard_secret_dev_key')
 CORS(app, origins=[
     "http://localhost:5173",
