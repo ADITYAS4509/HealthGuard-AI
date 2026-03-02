@@ -11,4 +11,4 @@ jobs:
     steps:
       - name: Ping Render App
         run: |
-          curl -I https://ai-23pi.onrender.com/health
+          curl -I https://healthguard-ai-23pi.onrender.com/health
