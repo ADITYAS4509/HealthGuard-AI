@@ -1,5 +1,4 @@
 from flask import Flask, request, jsonify, session
-from flask import Flask, render_template
 from flask_cors import CORS
 import joblib
 import pandas as pd
@@ -81,7 +80,7 @@ app = Flask(__name__,
             static_url_path='')
 @app.route("/")
 def home():
-    return render_template("index.html")
+    return app.send_static_file("index.html")
 app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'ai_healthguard_secret_dev_key')
 CORS(app, origins=[
     "http://localhost:5173",
