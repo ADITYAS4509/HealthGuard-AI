@@ -239,6 +239,11 @@ def health_check():
 
 @app.route('/')
 def home():
+    return app.send_static_file('index.html')
+
+@app.route('/login')
+@app.route('/login.html')
+def login_page():
     return app.send_static_file('login.html')
 
 @app.route('/index')
@@ -253,7 +258,7 @@ def insurance_claims():
 
 @app.errorhandler(404)
 def not_found(e):
-    return app.send_static_file('login.html')
+    return app.send_static_file('index.html')
 
 @app.route('/predict_disease', methods=['POST'])
 def predict_disease():
