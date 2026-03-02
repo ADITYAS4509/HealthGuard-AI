@@ -1,7 +1,6 @@
 from flask import Flask, request, jsonify, session
 from flask_cors import CORS
 import joblib
-import pandas as pd
 import os
 import sqlite3
 import time
