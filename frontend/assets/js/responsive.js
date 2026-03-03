@@ -2,6 +2,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const navbarNav = document.querySelector('.navbar-nav');
     const navbarInner = document.querySelector('.navbar-inner');
 
+    if (!navbarNav || !navbarInner) return;
+
     // Create Hamburger Button
     const hamburger = document.createElement('button');
     hamburger.className = 'hamburger';
