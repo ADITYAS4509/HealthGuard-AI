@@ -17,11 +17,11 @@
     <link rel="stylesheet" href="assets/css/responsive.css" />
     <link rel="manifest" href="manifest.json" />
     <meta name="theme-color" content="#060d1a" />
+    <script src="assets/js/responsive.js" defer></script>
     <style>
         /* ================================================================
        INSURANCE CLAIMS PAGE – LOCAL STYLES
        ================================================================ */
-
         .ic-page-header {
             padding: 120px 0 3rem;
             background: var(--clr-bg-deep);
@@ -87,7 +87,6 @@
             color: var(--clr-accent);
         }
 
-        /* ---- Main Page Body ---- */
         .ic-body {
             background: var(--clr-bg-mid);
         }
@@ -137,7 +136,6 @@
             line-height: 1.6;
         }
 
-        /* ---- Conditions Grid ---- */
         .ic-conditions-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -213,7 +211,6 @@
             flex-shrink: 0;
         }
 
-        /* ---- OPD vs IPD Card ---- */
         .ic-opd-ipd-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -279,7 +276,6 @@
             gap: 0.4rem;
         }
 
-        /* ---- Claim Steps ---- */
         .ic-steps-list {
             display: flex;
             flex-direction: column;
@@ -317,8 +313,6 @@
             font-family: var(--font-primary);
         }
 
-        /* .ic-step-content — no additional styles needed */
-
         .ic-step-title {
             font-size: 0.95rem;
             font-weight: 700;
@@ -332,7 +326,6 @@
             line-height: 1.55;
         }
 
-        /* ---- Documents Checklist ---- */
         .ic-docs-list {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -374,7 +367,6 @@
             stroke-linejoin: round;
         }
 
-        /* ---- Disclaimer ---- */
         .ic-disclaimer-box {
             background: rgba(245, 158, 11, 0.04);
             border: 1px solid rgba(245, 158, 11, 0.25);
@@ -429,7 +421,6 @@
             margin-top: 0.5rem;
         }
 
-        /* ---- Forbidden Actions Notice ---- */
         .ic-forbidden-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
@@ -443,7 +434,7 @@
             gap: 0.5rem;
             font-size: 0.78rem;
             color: var(--clr-text-muted);
-            background: var(--clr-glass-bg);
+            background: rgba(255, 255, 255, 0.03);
             border: 1px solid var(--clr-glass-border);
             border-radius: 6px;
             padding: 0.5rem 0.75rem;
@@ -455,32 +446,10 @@
             color: var(--clr-danger);
             flex-shrink: 0;
         }
-
-        /* ---- Responsive ---- */
-        @media (max-width: 768px) {
-            .ic-page-title {
-                font-size: 1.8rem;
-            }
-
-            .ic-opd-ipd-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .ic-conditions-grid {
-                grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            }
-        }
-
-        @media (max-width: 480px) {
-            .ic-page-title {
-                font-size: 1.5rem;
-            }
-        }
     </style>
 </head>
 
 <body>
-
     <!-- ===================== NAVBAR ===================== -->
     <nav class="navbar" role="navigation" aria-label="Main navigation">
         <div class="navbar-inner">
@@ -493,7 +462,7 @@
                 </div>
                 <span class="brand-text">Health<span>Guard</span></span>
             </a>
-            <ul class="navbar-nav">
+            <ul class="navbar-nav" id="navbarNav">
                 <li><a href="index.html">Home</a></li>
                 <li><a href="index.html#symptom-section" data-i18n="nav_symptoms">Symptoms</a></li>
                 <li><a href="index.html#results-section" data-i18n="nav_results">Results</a></li>
@@ -501,7 +470,6 @@
                 <li><a href="insurance-claims.html" style="color:var(--clr-accent); font-weight:600;"
                         data-i18n="nav_insurance">Insurance
                         Claims</a></li>
-                <!-- ── Auth nav item (Login / User dropdown) ── -->
                 <li style="position: relative;" id="navAuthContainer">
                     <a href="login.html" class="nav-cta" id="navLoginBtn"
                         style="background:transparent;border:none;cursor:pointer;font-family:inherit;text-decoration:none;display:flex;align-items:center;gap:0.5rem;"
@@ -565,7 +533,6 @@
     </header>
 
     <main class="ic-body">
-
         <!-- =====================================================================
          SECTION 1 — ELIGIBLE CONDITIONS
          ===================================================================== -->
@@ -580,7 +547,6 @@
                 </p>
 
                 <div class="ic-conditions-grid">
-
                     <!-- Cancer -->
                     <div class="ic-condition-card">
                         <div class="ic-condition-icon" aria-hidden="true">
@@ -593,7 +559,6 @@
                         <div class="ic-condition-name" data-i18n="ic_cond_cancer">Cancer</div>
                         <div class="ic-applicable-badge">Insurance Commonly Applicable</div>
                     </div>
-
                     <!-- Diabetes -->
                     <div class="ic-condition-card">
                         <div class="ic-condition-icon" aria-hidden="true">
@@ -605,131 +570,6 @@
                         <div class="ic-condition-name" data-i18n="ic_cond_diabetes">Diabetes (Type 1 / Type 2)</div>
                         <div class="ic-applicable-badge">Insurance Commonly Applicable</div>
                     </div>
-
-                    <!-- HIV / AIDS -->
-                    <div class="ic-condition-card">
-                        <div class="ic-condition-icon" aria-hidden="true">
-                            <svg viewBox="0 0 24 24">
-                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                            </svg>
-                        </div>
-                        <div class="ic-condition-name" data-i18n="ic_cond_hiv">HIV / AIDS</div>
-                        <div class="ic-applicable-badge">Insurance Commonly Applicable</div>
-                    </div>
-
-                    <!-- Heart Disease -->
-                    <div class="ic-condition-card">
-                        <div class="ic-condition-icon" aria-hidden="true">
-                            <svg viewBox="0 0 24 24">
-                                <path
-                                    d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
-                            </svg>
-                        </div>
-                        <div class="ic-condition-name" data-i18n="ic_cond_heart">Heart Disease</div>
-                        <div class="ic-applicable-badge">Insurance Commonly Applicable</div>
-                    </div>
-
-                    <!-- Stroke -->
-                    <div class="ic-condition-card">
-                        <div class="ic-condition-icon" aria-hidden="true">
-                            <svg viewBox="0 0 24 24">
-                                <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-                            </svg>
-                        </div>
-                        <div class="ic-condition-name" data-i18n="ic_cond_stroke">Stroke</div>
-                        <div class="ic-applicable-badge">Insurance Commonly Applicable</div>
-                    </div>
-
-                    <!-- CKD -->
-                    <div class="ic-condition-card">
-                        <div class="ic-condition-icon" aria-hidden="true">
-                            <svg viewBox="0 0 24 24">
-                                <path
-                                    d="M19 9c1.66 0 3-1.34 3-3s-1.34-3-3-3c-1.3 0-2.4.84-2.82 2H14C13.43 5 13 5.45 13 6v2h-2V6c0-.55-.45-1-1-1H7.82C7.4 3.84 6.3 3 5 3 3.34 3 2 4.34 2 6s1.34 3 3 3c.38 0 .74-.08 1.07-.2L10 14.45V19a1 1 0 001 1h2a1 1 0 001-1v-4.55l3.93-5.65C18.26 8.92 18.62 9 19 9z" />
-                            </svg>
-                        </div>
-                        <div class="ic-condition-name" data-i18n="ic_cond_kidney">Chronic Kidney Disease</div>
-                        <div class="ic-applicable-badge">Insurance Commonly Applicable</div>
-                    </div>
-
-                    <!-- Liver Cirrhosis -->
-                    <div class="ic-condition-card">
-                        <div class="ic-condition-icon" aria-hidden="true">
-                            <svg viewBox="0 0 24 24">
-                                <path d="M12 2L2 7l10 5 10-5-10-5z" />
-                                <path d="M2 17l10 5 10-5" />
-                                <path d="M2 12l10 5 10-5" />
-                            </svg>
-                        </div>
-                        <div class="ic-condition-name" data-i18n="ic_cond_liver">Liver Cirrhosis</div>
-                        <div class="ic-applicable-badge">Insurance Commonly Applicable</div>
-                    </div>
-
-                    <!-- Asthma (Severe/Chronic) -->
-                    <div class="ic-condition-card">
-                        <div class="ic-condition-icon" aria-hidden="true">
-                            <svg viewBox="0 0 24 24">
-                                <path
-                                    d="M12 2c-3.31 0-6 2.69-6 6v2c0 1.1.9 2 2 2h1v4c0 1.1.9 2 2 2h2c1.1 0 2-.9 2-2v-4h1c1.1 0 2-.9 2-2V8c0-3.31-2.69-6-6-6z" />
-                            </svg>
-                        </div>
-                        <div class="ic-condition-name" data-i18n="ic_cond_asthma">Severe / Chronic Asthma</div>
-                        <div class="ic-applicable-badge">Insurance Commonly Applicable</div>
-                    </div>
-
-                    <!-- COPD -->
-                    <div class="ic-condition-card">
-                        <div class="ic-condition-icon" aria-hidden="true">
-                            <svg viewBox="0 0 24 24">
-                                <path
-                                    d="M17 8C8 10 5.9 16.17 3.82 19.82A1 1 0 004.7 21C10 21 22 19 22 12c0-5-3-8-5-4z" />
-                            </svg>
-                        </div>
-                        <div class="ic-condition-name" data-i18n="ic_cond_copd">COPD</div>
-                        <div class="ic-applicable-badge">Insurance Commonly Applicable</div>
-                    </div>
-
-                    <!-- Epilepsy -->
-                    <div class="ic-condition-card">
-                        <div class="ic-condition-icon" aria-hidden="true">
-                            <svg viewBox="0 0 24 24">
-                                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
-                            </svg>
-                        </div>
-                        <div class="ic-condition-name" data-i18n="ic_cond_epilepsy">Epilepsy</div>
-                        <div class="ic-applicable-badge">Insurance Commonly Applicable</div>
-                    </div>
-
-                    <!-- Autoimmune Disorders -->
-                    <div class="ic-condition-card">
-                        <div class="ic-condition-icon" aria-hidden="true">
-                            <svg viewBox="0 0 24 24">
-                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                                <path d="M9 12l2 2 4-4" />
-                            </svg>
-                        </div>
-                        <div class="ic-condition-name" data-i18n="ic_cond_autoimmune">Autoimmune Disorders</div>
-                        <div class="ic-applicable-badge">Insurance Commonly Applicable</div>
-                    </div>
-
-                    <!-- Acute / Mild Conditions Note -->
-                    <div class="ic-condition-card" style="border-color:rgba(148,163,184,0.2); opacity:0.65;">
-                        <div class="ic-condition-icon"
-                            style="background:rgba(148,163,184,0.08); border-color:rgba(148,163,184,0.2);"
-                            aria-hidden="true">
-                            <svg viewBox="0 0 24 24" style="stroke:var(--clr-text-muted)">
-                                <circle cx="12" cy="12" r="10" />
-                                <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" />
-                            </svg>
-                        </div>
-                        <div class="ic-condition-name" data-i18n="ic_cond_acute" style="color:var(--clr-text-muted);">
-                            Acute / Mild Conditions
-                        </div>
-                        <div style="font-size:0.72rem; color:var(--clr-text-muted); line-height:1.4;"
-                            data-i18n="ic_cond_acute_desc">Flu, viral
-                            infections, minor injuries — typically not eligible for IPD claims</div>
-                    </div>
-
                 </div>
             </div>
         </section>
@@ -742,234 +582,38 @@
                 <div class="ic-section-label">Coverage Types</div>
                 <h2 class="ic-section-title" id="opdipd-heading" data-i18n="ic_coverage_title">OPD vs. IPD Coverage</h2>
                 <p class="ic-section-desc" data-i18n="ic_coverage_desc">Understanding which type of care applies to your
-                    condition determines how
-                    your claim can be processed.</p>
+                    condition determines how your claim can be processed.</p>
 
                 <div class="ic-opd-ipd-grid">
-
                     <div class="ic-care-type-card">
                         <div class="ic-care-type-badge opd">OPD</div>
                         <div class="ic-care-type-title" data-i18n="ic_opd_title">Outpatient Coverage</div>
                         <div class="ic-care-type-desc" data-i18n="ic_opd_desc">
                             OPD (Outpatient Department) covers consultations, diagnostic tests, and medications where
-                            the patient
-                            is seen and sent home without formal admission. Many standard policies have limited or no
-                            OPD cover.
-                            Check your specific policy document for OPD sub-limits.
-                        </div>
-                        <div class="ic-care-type-note">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <circle cx="12" cy="12" r="10" />
-                                <line x1="12" y1="8" x2="12" y2="12" />
-                                <line x1="12" y1="16" x2="12.01" y2="16" />
-                            </svg>
-                            Less commonly covered under standard plans
+                            the patient is seen and sent home without formal admission.
                         </div>
                     </div>
-
                     <div class="ic-care-type-card highlight">
                         <div class="ic-care-type-badge ipd">IPD — Recommended</div>
                         <div class="ic-care-type-title" data-i18n="ic_ipd_title">Inpatient Coverage</div>
                         <div class="ic-care-type-desc" data-i18n="ic_ipd_desc">
                             IPD (Inpatient Department) requires formal hospital admission for at least 24 hours. Most
-                            standard
-                            health insurance policies are designed primarily for IPD claims. This typically covers room
-                            rent,
-                            ICU charges, surgeon fees, medicines during admission, and post-hospitalization follow-ups
-                            (usually up to 60 days after discharge).
-                        </div>
-                        <div class="ic-care-type-note">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <polyline points="20 6 9 17 4 12" />
-                            </svg>
-                            Usually required for chronic condition claims
+                            standard health insurance policies are designed primarily for IPD claims.
                         </div>
                     </div>
-
                 </div>
             </div>
         </section>
 
         <!-- =====================================================================
-         SECTION 3 — HOW TO CLAIM
-         ===================================================================== -->
-        <section class="ic-section" id="how-to-claim" aria-labelledby="howtoclaim-heading">
-            <div class="container">
-                <div class="ic-section-label">Process</div>
-                <h2 class="ic-section-title" id="howtoclaim-heading" data-i18n="ic_claim_process">How to File a Claim
-                </h2>
-                <p class="ic-section-desc" data-i18n="ic_claim_desc">
-                    Follow these general steps when initiating a health insurance claim for a chronic or major
-                    condition.
-                    Specific requirements may vary by insurer and hospital.
-                </p>
-
-                <div class="ic-steps-list" role="list">
-
-                    <div class="ic-step" role="listitem">
-                        <div class="ic-step-number" aria-label="Step 1">1</div>
-                        <div class="ic-step-content">
-                            <div class="ic-step-title" data-i18n="ic_step1_title">Admission and Intimation</div>
-                            <div class="ic-step-desc" data-i18n="ic_step1_desc">
-                                Notify your insurer within 24 hours of emergency admission or 48 hours before planned
-                                admission.
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="ic-step" role="listitem">
-                        <div class="ic-step-number" aria-label="Step 2">2</div>
-                        <div class="ic-step-content">
-                            <div class="ic-step-title" data-i18n="ic_step2_title">Cashless Request (If Applicable)</div>
-                            <div class="ic-step-desc" data-i18n="ic_step2_desc">
-                                Present your insurance card at the hospital's TPA desk for cashless facility.
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="ic-step" role="listitem">
-                        <div class="ic-step-number" aria-label="Step 3">3</div>
-                        <div class="ic-step-content">
-                            <div class="ic-step-title" data-i18n="ic_step3_title">Claim Documentation</div>
-                            <div class="ic-step-desc" data-i18n="ic_step3_desc">
-                                Collect all discharge summaries, investigation reports, and original bills.
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="ic-step" role="listitem">
-                        <div class="ic-step-number" aria-label="Step 4">4</div>
-                        <div class="ic-step-content">
-                            <div class="ic-step-title" data-i18n="ic_step4_title">Verification and Settlement</div>
-                            <div class="ic-step-desc" data-i18n="ic_step4_desc">
-                                The insurance company verifies documents and settles the claim directly or via
-                                reimbursement.
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="ic-step" role="listitem">
-                        <div class="ic-step-number" aria-label="Step 5">5</div>
-                        <div class="ic-step-content">
-                            <div class="ic-step-title">Claim Tracking and Follow-Up</div>
-                            <div class="ic-step-desc">
-                                Track your claim status through your insurer's official portal, helpline, or TPA desk.
-                                Claims are typically processed within 7 to 30 working days. If your claim is partially
-                                rejected or queried, respond promptly with any additional documents requested by the
-                                insurer.
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </section>
-
-        <!-- =====================================================================
-         SECTION 4 — REQUIRED DOCUMENTS
-         ===================================================================== -->
-        <section class="ic-section" id="documents" aria-labelledby="documents-heading">
-            <div class="container">
-                <div class="ic-section-label">Documentation</div>
-                <h2 class="ic-section-title" id="documents-heading" data-i18n="ic_docs_title">Required Documents
-                    Checklist</h2>
-                <p class="ic-section-desc" data-i18n="ic_docs_desc">
-                    Ensure you have these documents ready before filing a claim. Incomplete submissions are the most
-                    common cause of claim delays or rejections.
-                </p>
-
-                <div class="ic-docs-list" role="list">
-
-                    <div class="ic-doc-item" role="listitem">
-                        <div class="ic-doc-check" aria-hidden="true">
-                            <svg viewBox="0 0 24 24">
-                                <polyline points="20 6 9 17 4 12" />
-                            </svg>
-                        </div>
-                        <span data-i18n="ic_doc1">Doctor's Diagnosis Report (with registration number)</span>
-                    </div>
-
-                    <div class="ic-doc-item" role="listitem">
-                        <div class="ic-doc-check" aria-hidden="true">
-                            <svg viewBox="0 0 24 24">
-                                <polyline points="20 6 9 17 4 12" />
-                            </svg>
-                        </div>
-                        <span data-i18n="ic_doc2">All Original Hospital Bills and Receipts</span>
-                    </div>
-
-                    <div class="ic-doc-item" role="listitem">
-                        <div class="ic-doc-check" aria-hidden="true">
-                            <svg viewBox="0 0 24 24">
-                                <polyline points="20 6 9 17 4 12" />
-                            </svg>
-                        </div>
-                        <span data-i18n="ic_doc3">Discharge Summary (signed by treating physician)</span>
-                    </div>
-
-                    <div class="ic-doc-item" role="listitem">
-                        <div class="ic-doc-check" aria-hidden="true">
-                            <svg viewBox="0 0 24 24">
-                                <polyline points="20 6 9 17 4 12" />
-                            </svg>
-                        </div>
-                        <span data-i18n="ic_doc4">Diagnostic Test Reports (blood work, imaging, etc.)</span>
-                    </div>
-
-                    <div class="ic-doc-item" role="listitem">
-                        <div class="ic-doc-check" aria-hidden="true">
-                            <svg viewBox="0 0 24 24">
-                                <polyline points="20 6 9 17 4 12" />
-                            </svg>
-                        </div>
-                        <span data-i18n="ic_doc5">Insurance Policy Copy (provided by you / your insurer)</span>
-                    </div>
-
-                    <div class="ic-doc-item" role="listitem">
-                        <div class="ic-doc-check" aria-hidden="true">
-                            <svg viewBox="0 0 24 24">
-                                <polyline points="20 6 9 17 4 12" />
-                            </svg>
-                        </div>
-                        <span data-i18n="ic_doc6">Completed Claim Form (from your insurer)</span>
-                    </div>
-
-                    <div class="ic-doc-item" role="listitem">
-                        <div class="ic-doc-check" aria-hidden="true">
-                            <svg viewBox="0 0 24 24">
-                                <polyline points="20 6 9 17 4 12" />
-                            </svg>
-                        </div>
-                        <span data-i18n="ic_doc7">Government-Issued Photo ID (patient and claimant)</span>
-                    </div>
-
-                    <div class="ic-doc-item" role="listitem">
-                        <div class="ic-doc-check" aria-hidden="true">
-                            <svg viewBox="0 0 24 24">
-                                <polyline points="20 6 9 17 4 12" />
-                            </svg>
-                        </div>
-                        <span data-i18n="ic_doc8">Pharmacy Bills for Prescribed Medications</span>
-                    </div>
-
-                </div>
-            </div>
-        </section>
-
-        <!-- =====================================================================
-         SECTION 5 — DISCLAIMER (Mandatory)
+         SECTION 3 — DISCLAIMER
          ===================================================================== -->
         <section class="ic-section" id="disclaimer" aria-labelledby="disclaimer-heading">
             <div class="container">
                 <div class="ic-section-label">Important Notice</div>
                 <h2 class="ic-section-title" id="disclaimer-heading" data-i18n="ic_disclaimer_title">Mandatory
-                    Disclaimer</h2>
-                <p class="ic-section-desc" data-i18n="ic_disclaimer_desc">
-                    Please read the following carefully before acting on any guidance provided on this page.
-                </p>
-
+                    Disclaimer
+                </h2>
                 <div class="ic-disclaimer-box" role="note" aria-label="Disclaimer">
                     <div class="ic-disclaimer-header">
                         <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -978,46 +622,26 @@
                             <line x1="12" y1="9" x2="12" y2="13" />
                             <line x1="12" y1="17" x2="12.01" y2="17" />
                         </svg>
-                        Medical &amp; Legal Disclaimer
+                        Medical & Legal Disclaimer
                     </div>
                     <ul class="ic-disclaimer-points">
                         <li data-i18n="ic_disclaimer_point1">Insurance eligibility is determined solely by the terms and
-                            conditions of your individual
-                            policy. No two policies are identical.</li>
-                        <li data-i18n="ic_disclaimer_point2">This platform does not guarantee claim approval, full
-                            reimbursement, or coverage for any
-                            specific condition or treatment.</li>
-                        <li data-i18n="ic_disclaimer_point3">Always consult your insurer, hospital's TPA desk, or a
-                            licensed insurance advisor for final
-                            confirmation before proceeding with a claim.</li>
-                        <li data-i18n="ic_disclaimer_point4">The guidance on this page is general and educational in
-                            nature. It is not a substitute for
-                            professional legal or financial advice.</li>
-                        <li data-i18n="ic_disclaimer_point5">Pre-existing condition clauses, waiting periods, and policy
-                            sub-limits may significantly
-                            affect your actual eligibility.</li>
+                            conditions of your individual policy.</li>
+                        <li data-i18n="ic_disclaimer_point2">This platform does not guarantee claim approval or full
+                            reimbursement.</li>
                     </ul>
                 </div>
 
                 <div style="margin-top:1.25rem;">
-                    <div
-                        style="font-size:0.78rem; font-weight:600; color:var(--clr-text-muted); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:0.65rem;">
-                        This platform does NOT provide:</div>
                     <div class="ic-forbidden-grid">
-                        <div class="ic-forbidden-item"><span class="ic-forbidden-x" aria-hidden="true">&#215;</span>
+                        <div class="ic-forbidden-item"><span class="ic-forbidden-x" aria-hidden="true">&times;</span>
                             Claim approval guarantees</div>
-                        <div class="ic-forbidden-item"><span class="ic-forbidden-x" aria-hidden="true">&#215;</span>
+                        <div class="ic-forbidden-item"><span class="ic-forbidden-x" aria-hidden="true">&times;</span>
                             Policy recommendations</div>
-                        <div class="ic-forbidden-item"><span class="ic-forbidden-x" aria-hidden="true">&#215;</span>
-                            Insurance advertisements</div>
-                        <div class="ic-forbidden-item"><span class="ic-forbidden-x" aria-hidden="true">&#215;</span>
-                            Financial or legal advice</div>
                     </div>
                 </div>
-
             </div>
         </section>
-
     </main>
 
     <!-- ===================== FOOTER ===================== -->
@@ -1026,38 +650,19 @@
             <div class="footer-top">
                 <div>
                     <div class="footer-brand-name">Health<span>Guard</span></div>
-                    <div class="footer-desc">
-                        A secure clinical decision-support portal. Streamlining triage workflows and patient routing.
+                    <div class="footer-desc">A secure clinical decision-support portal. Streamlining triage workflows.
                     </div>
-                </div>
-                <div>
-                    <div class="footer-col-title">Product</div>
-                    <ul class="footer-links">
-                        <li><a href="index.html#symptom-section">Symptom Checker</a></li>
-                        <li><a href="index.html#results-section">Risk Analysis</a></li>
-                        <li><a href="insurance-claims.html">Insurance Claims</a></li>
-                        <li><a href="index.html#hospitals-section">Hospital Finder</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <div class="footer-col-title">Legal</div>
-                    <ul class="footer-links">
-                        <li><a href="#">Privacy Policy</a></li>
-                        <li><a href="#">Terms of Use</a></li>
-                        <li><a href="#">Medical Disclaimer</a></li>
-                        <li><a href="#">Cookie Policy</a></li>
-                    </ul>
                 </div>
             </div>
             <div class="footer-bottom">
-                <div class="footer-copy">&copy; 2026 AI HealthGuard. All rights reserved. For informational purposes
-                    only. | Author: Aditya Shukla (adityashukla4509@gmail.com)</div>
-                <div class="footer-tagline">Built with <span>&hearts;</span> for better healthcare access</div>
+                <div class="footer-copy">&copy; 2026 AI HealthGuard. All rights reserved.</div>
             </div>
         </div>
     </footer>
 
-    <!-- Auth nav state — mirrors app.js checkAuthState for this standalone page -->
+    <!-- Scripts -->
+    <script src="app.js?v=9.3"></script>
+    <script src="assets/js/i18n.js?v=1.1"></script>
     <script>
         (function () {
             try {
@@ -1069,23 +674,14 @@
                 if (session && session.data && !session.data.is_guest) {
                     const displayName = session.data.full_name || session.data.username || 'User';
                     if (loginBtn) {
-                        loginBtn.textContent = '\u{1F464} ' + displayName + ' \u25BE';
+                        loginBtn.textContent = '👤 ' + displayName + ' ▾';
                         loginBtn.setAttribute('href', '#');
                         loginBtn.addEventListener('click', function (e) {
                             e.preventDefault();
                             if (dropdown) dropdown.style.display = dropdown.style.display === 'flex' ? 'none' : 'flex';
                         });
                     }
-                    document.addEventListener('click', function (e) {
-                        if (dropdown && !e.target.closest('#navAuthContainer')) dropdown.style.display = 'none';
-                    });
-                } else if (session && session.data && session.data.is_guest) {
-                    if (loginBtn) {
-                        loginBtn.innerHTML = '<span style="background:var(--clr-accent-dim);color:var(--clr-accent);padding:2px 8px;border-radius:12px;font-size:0.8rem;">Guest Session</span>';
-                        loginBtn.setAttribute('href', 'login.html');
-                    }
                 }
-
                 if (logoutBtn) {
                     logoutBtn.addEventListener('click', function (e) {
                         e.preventDefault();
@@ -1093,12 +689,9 @@
                         window.location.href = 'login.html';
                     });
                 }
-            } catch (_) { /* non-critical */ }
+            } catch (_) { }
         })();
     </script>
-    <script src="app.js?v=9.3"></script>
-    <script src="assets/js/i18n.js?v=1.1"></script>
-    <script src="assets/js/responsive.js"></script>
 </body>
 
 </html>

@@ -15,11 +15,11 @@
         rel="stylesheet" />
     <link rel="manifest" href="manifest.json" />
     <meta name="theme-color" content="#060d1a" />
+    <script src="assets/js/responsive.js" defer></script>
+    <script src="assets/js/login.js?v=9.3" defer></script>
 </head>
 
 <body onload="console.log('[HG] Body loaded')">
-    <script src="assets/js/responsive.js" defer></script>
-    <script src="assets/js/login.js?v=9.3" defer></script>
     <!-- ===================== NOTIFICATION ===================== -->
     <div class="notification" id="notification" role="alert">
         <span id="notifIcon">✅</span>
@@ -33,39 +33,18 @@
                 <div class="brand-icon">🏥</div>
                 <span class="brand-text">Health<span>Guard</span></span>
             </a>
-            <ul class="navbar-nav">
+            <button class="hamburger" id="hamburgerBtn" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="navbar-nav" id="navbarNav">
                 <li><a href="index.html" class="nav-cta"
                         style="background:transparent;border:1px solid var(--clr-glass-border);color:var(--clr-text-muted);">←
                         Back to Home</a></li>
             </ul>
         </div>
     </nav>
-
-    <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            background: var(--clr-bg);
-            background-image:
-                radial-gradient(circle at 15% 50%, rgba(0, 240, 255, 0.03) 0%, transparent 50%),
-                radial-gradient(circle at 85% 30%, rgba(93, 0, 255, 0.03) 0%, transparent 50%);
-        }
-
-        .auth-container {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem 1rem;
-        }
-
-        .auth-card {
-            width: 100%;
-            max-width: 480px;
-            padding: 2rem;
-        }
-    </style>
 
     <main class="auth-container">
         <!-- ===================== LANDING VIEW ===================== -->
