@@ -1293,25 +1293,7 @@ You are NOT a replacement for a doctor. Be helpful, accurate, and safe."""
     except Exception as e:
         print(f"[CHAT ERR] {e}")
         return jsonify({'reply': "HealthGuard Assistant (Demo Mode): I'm having trouble connecting to the cloud. Please check your symptoms in the main portal above.", 'status': 'error_fallback'})
-# ── KEEP ALIVE ──────────────────────────────
-import threading
-
-def keep_alive():
-    import time, requests
-    while True:
-        time.sleep(600)
-        try:
-            requests.get("https://healthguard-ai-23pi.onrender.com/health", timeout=10)
-            print("[SYS] Keep-alive ping sent.")
-        except Exception as e:
-            print(f"[SYS] Keep-alive failed: {e}")
-
-threading.Thread(target=keep_alive, daemon=True).start()
-# ─────────────────────────────────────────────
-
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 8000))
-    app.run(host='0.0.0.0', port=port, debug=True, use_reloader=False)
+# ── MAIN ────────────────────────────────────
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8000))

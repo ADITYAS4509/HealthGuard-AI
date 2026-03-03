@@ -1,0 +1,177 @@
+/* ============================================================
+   RESPONSIVENESS & MOBILE OVERHAUL
+   ============================================================ */
+
+/* Mobile Hamburger Button */
+.hamburger {
+    display: none;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 2rem;
+    height: 2rem;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    z-index: 1001;
+}
+
+.hamburger span {
+    width: 2rem;
+    height: 0.25rem;
+    background: var(--clr-text-primary);
+    border-radius: 10px;
+    transition: all 0.3s linear;
+    position: relative;
+    transform-origin: 1px;
+}
+
+/* Typography Overhaul */
+h1,
+.hero-title {
+    font-size: clamp(2rem, 8vw, 4rem) !important;
+}
+
+h2,
+.section-title {
+    font-size: clamp(1.5rem, 5vw, 2.5rem) !important;
+}
+
+h3 {
+    font-size: clamp(1.2rem, 4vw, 2rem) !important;
+}
+
+p,
+.section-desc,
+body {
+    font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+}
+
+/* Buttons & Inputs Touch Targets */
+.btn,
+.form-input,
+.form-select,
+.category-btn {
+    min-height: 48px;
+    display: inline-flex;
+    align-items: center;
+}
+
+/* TABLET & MOBILE BREAKPOINTS */
+@media (max-width: 1024px) {
+    .symptom-layout {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .symptom-layout>div:last-child {
+        grid-column: span 2;
+    }
+
+    .hero-grid {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: var(--space-8);
+    }
+
+    .hero-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar-inner {
+        padding: 0 var(--space-4);
+    }
+
+    .hamburger {
+        display: flex;
+    }
+
+    .navbar-nav {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 80%;
+        height: 100vh;
+        background: var(--clr-bg-deep);
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 2rem;
+        transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+    }
+
+    .navbar-nav.active {
+        right: 0;
+    }
+
+    /* Hamburger Animation */
+    .hamburger.active span:nth-child(1) {
+        transform: rotate(45deg);
+    }
+
+    .hamburger.active span:nth-child(2) {
+        opacity: 0;
+    }
+
+    .hamburger.active span:nth-child(3) {
+        transform: rotate(-45deg);
+    }
+
+    .symptom-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .section {
+        padding: var(--space-10) 0;
+    }
+
+    .container {
+        padding: 0 0.75rem;
+    }
+
+    .grid-2,
+    .grid-3,
+    .grid-4 {
+        grid-template-columns: 1fr;
+    }
+
+    .hero {
+        padding: 100px 0 var(--space-12);
+    }
+
+    .patient-factors-row {
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .location-action-row {
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .results-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* Touch Targets for Mobile */
+    .btn-lg {
+        padding: var(--space-4) var(--space-6);
+        width: 100%;
+    }
+}
+
+/* Prevention of Horizontal Scroll */
+body,
+html {
+    overflow-x: hidden;
+    max-width: 100vw;
+}
+
+* {
+    max-width: 100%;
+}
