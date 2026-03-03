@@ -583,7 +583,7 @@
 
     <script>
         'use strict';
-        const API = window.VITE_API_URL || 'http://localhost:8000';
+        const API = window.VITE_API_URL || 'https://healthguard-ai-23pi.onrender.com';
         const msgEl = document.getElementById('messages');
         const inp = document.getElementById('inp');
         const sBtn = document.getElementById('sBtn');
@@ -671,7 +671,7 @@
             } catch (e) {
                 rmTyping();
                 const msg = e.message.includes('fetch')
-                    ? '⚠️ Cannot reach the server. Make sure your backend is running on port 8000.'
+                    ? '⚠️ Cannot reach the server. Please try again in a moment.'
                     : `⚠️ ${esc(e.message)}`;
                 addMsg('bot', `<div class="abox danger">${msg}</div>`);
             }
