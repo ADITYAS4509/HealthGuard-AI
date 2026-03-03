@@ -422,6 +422,38 @@ SYMPTOM_CONDITION_MAP = [
         "risk": "Low",
         "emergency": False,
     },
+    {
+        "condition": "Anxiety / Emotional Distress",
+        "triggers": ["s49"],
+        "required": ["s49"],
+        "min_triggers": 1,
+        "risk": "Low",
+        "emergency": False,
+    },
+    {
+        "condition": "Heartburn / Acid Reflux (Mild)",
+        "triggers": ["s37"],
+        "required": ["s37"],
+        "min_triggers": 1,
+        "risk": "Low",
+        "emergency": False,
+    },
+    {
+        "condition": "Rash / Skin Irritation",
+        "triggers": ["s44"],
+        "required": ["s44"],
+        "min_triggers": 1,
+        "risk": "Low",
+        "emergency": False,
+    },
+    {
+        "condition": "Insomnia / Sleep Disturbance",
+        "triggers": ["s51"],
+        "required": ["s51"],
+        "min_triggers": 1,
+        "risk": "Low",
+        "emergency": False,
+    },
 ]
 
 

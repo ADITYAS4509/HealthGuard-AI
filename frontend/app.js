@@ -816,10 +816,10 @@ function renderHospitals(hospitalsData, coords = null) {
           </div>
           <div class="hospital-meta" style="margin-top:0.5rem">
             <div class="meta-row"><span class="icon">🛣️</span>${hDistance} km away</div>
-            <div class="meta-row"><span class="icon">📞</span>${h.phone}</div>
+            <div class="meta-row"><span class="icon">📞</span>${h.isGenericHelpline ? '<span style="color:var(--clr-accent);">Emergency Helpline</span>' : h.phone}</div>
           </div>
           <div class="hospital-actions" style="display:flex !important; visibility:visible !important;">
-            <a href="tel:${phoneEscaped}" class="btn btn-primary btn-sm" style="flex:1; display:flex;">📞 Call</a>
+            <a href="tel:${h.isGenericHelpline ? '108' : phoneEscaped}" class="btn btn-primary btn-sm" style="flex:1; display:flex;">📞 ${h.isGenericHelpline ? 'Call 108' : 'Call'}</a>
             <a href="${h.nav_link}" target="_blank" rel="noopener" class="btn btn-outline btn-sm" style="flex:1; display:flex;">🗺️ Navigate</a>
           </div>
         </div>
@@ -1550,6 +1550,7 @@ function initAutocomplete() {
    ============================================================ */
 document.addEventListener('DOMContentLoaded', () => {
     const loginBtn = document.getElementById('navLoginBtn');
+    const registerBtn = document.getElementById('navRegisterBtn');
     const authModal = document.getElementById('authModal');
     const closeBtn = document.getElementById('authCloseBtn');
 
@@ -1576,7 +1577,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // UI Protection elements
     const protectedElements = document.querySelectorAll('[data-requires-auth="true"]');
-    const navLoginBtn = document.getElementById('navLoginBtn');
+    const navLoginBtn = loginBtn;
+    const navRegisterBtn = registerBtn;
     const navUserDropdown = document.getElementById('navUserDropdown');
     const navAuthContainer = document.getElementById('navAuthContainer');
     const btnLogout = document.getElementById('btnLogout');
@@ -1639,7 +1641,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 navLoginBtn.innerHTML = `👤 ${displayName} ▾`;
                 navLoginBtn.setAttribute('href', '#'); // Dropdown toggle
                 navLoginBtn.dataset.i18n = '';
+                navLoginBtn.style.background = ''; // Reset to default
             }
+            if (navRegisterBtn) navRegisterBtn.style.display = 'none';
 
             protectedElements.forEach(el => {
                 el.classList.remove('disabled-auth');
@@ -1653,10 +1657,15 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (session && session.data && session.data.is_guest) {
             // MODE 2: GUEST USER (Analyze only, No Save)
             if (navLoginBtn) {
-                navLoginBtn.innerHTML = `<span style="background:var(--clr-accent-dim); color:var(--clr-accent); padding:2px 8px; border-radius:12px; font-size:0.8rem;">Guest Session</span>`;
-                navLoginBtn.setAttribute('href', 'login.html'); // Click to fully login
-                navLoginBtn.dataset.i18n = '';
+                navLoginBtn.innerHTML = `Login`;
+                navLoginBtn.setAttribute('href', 'login.html');
+                navLoginBtn.dataset.i18n = 'nav_login';
+                navLoginBtn.style.background = ''; // Restore accent color
                 if (navUserDropdown) navUserDropdown.style.display = 'none';
+            }
+            if (navRegisterBtn) {
+                navRegisterBtn.style.display = 'block';
+                navRegisterBtn.setAttribute('href', 'login.html?tab=register');
             }
 
             protectedElements.forEach(el => {
@@ -1691,7 +1700,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 navLoginBtn.innerHTML = `Login`;
                 navLoginBtn.setAttribute('href', 'login.html');
                 navLoginBtn.dataset.i18n = 'nav_login';
+                navLoginBtn.style.background = ''; // Restore accent color
                 if (navUserDropdown) navUserDropdown.style.display = 'none';
+            }
+            if (navRegisterBtn) {
+                navRegisterBtn.style.display = 'block';
+                navRegisterBtn.setAttribute('href', 'login.html?tab=register');
             }
 
             protectedElements.forEach(el => {
@@ -1849,11 +1863,20 @@ async function fetchHospitals(lat, lon) {
             const name = tags.name;
             const emergency = tags.emergency === 'yes';
             const distance_km = getDistanceKm(lat, lon, hLat, hLon);
-            const phone = tags.phone || "Not available";
+
+            // Multi-tag phone hunt
+            let rawPhone = tags.phone || tags['contact:phone'] || tags['phone:emergency'] || tags['contact:mobile'] || "";
+            // Clean up placeholders like "N/A", "none", etc.
+            if (rawPhone && /^(n\/?a|none|not available|null)$/i.test(rawPhone.trim())) {
+                rawPhone = "";
+            }
+            const phone = rawPhone || "Helpline (108/104)";
+            const isGenericHelpline = !rawPhone;
+
             const nav_link = `https://www.google.com/maps/dir/?api=1&destination=${hLat},${hLon}`;
 
             hospitalsData.push({
-                name, distance_km, emergency, phone, nav_link,
+                name, distance_km, emergency, phone, nav_link, isGenericHelpline,
                 tags, is_nearest_emergency: false
             });
         });

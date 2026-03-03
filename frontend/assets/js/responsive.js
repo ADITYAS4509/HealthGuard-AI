@@ -24,8 +24,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const toggleMenu = (e) => {
         if (e) e.stopPropagation();
         navbarNav.classList.toggle('active');
-        // Support user's '.open' class too
         navbarNav.classList.toggle('open');
+        navbarNav.classList.toggle('mobile-open'); // Matches style.css line 2475
         hamburger.classList.toggle('active');
         hamburger.classList.toggle('open');
     };
@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Close when clicking outside
     document.addEventListener('click', (e) => {
         if (!navbarNav.contains(e.target) && !hamburger.contains(e.target)) {
-            navbarNav.classList.remove('active', 'open');
+            navbarNav.classList.remove('active', 'open', 'mobile-open');
             hamburger.classList.remove('active', 'open');
         }
     });
@@ -43,7 +43,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Close when clicking a link
     navbarNav.querySelectorAll('a').forEach(link => {
         link.addEventListener('click', () => {
-            navbarNav.classList.remove('active', 'open');
+            navbarNav.classList.remove('active', 'open', 'mobile-open');
             hamburger.classList.remove('active', 'open');
         });
     });

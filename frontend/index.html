@@ -48,7 +48,7 @@
         <span class="brand-text">Health<span>Guard</span></span>
       </a>
       <!-- ☰ HAMBURGER BUTTON (mobile only) -->
-      <button class="hamburger-btn" id="hamburgerBtn" aria-label="Toggle navigation menu" aria-expanded="false">
+      <button class="hamburger" id="hamburgerBtn" aria-label="Toggle navigation menu" aria-expanded="false">
         <span class="bar"></span>
         <span class="bar"></span>
         <span class="bar"></span>
@@ -58,10 +58,11 @@
         <li><a href="#symptom-section" data-i18n="nav_symptoms">Symptoms</a></li>
         <li><a href="#patient-section" data-i18n="nav_analyze">Analyze</a></li>
         <li><a href="#results-section" data-i18n="nav_results">Results</a></li>
-        <li><a href="chatbot.html">🤖 AI Chat</a></li>
+        <li><a href="chatbot.html" data-i18n="nav_chat">AI Chat</a></li>
         <li><a href="#hospitals-section" data-i18n="nav_hospitals">Hospitals</a></li>
-        <li><a href="insurance-claims.html" data-i18n="nav_insurance">🏥 Insurance Claims</a></li>
-        <li id="navAuthContainer">
+        <li><a href="insurance-claims.html" data-i18n="nav_insurance">🏥 Insurance
+            Claims</a></li>
+        <li id="navAuthContainer" style="display:flex; gap:0.75rem; align-items:center;">
           <a href="login.html" class="nav-cta" id="navLoginBtn" data-i18n="nav_login">Login</a>
           <!-- Dropdown Scaffolding for Logged In users -->
           <div id="navUserDropdown" class="glass-card"
@@ -622,6 +623,8 @@
   <script src="assets/js/i18n.js?v=1.1"></script>
   <script src="assets/js/symptoms_i18n.js?v=5"></script>
   <script src="assets/js/cities.js?v=5"></script>
+  <script src="assets/js/responsive.js?v=5"></script>
   <script src="app.js?v=9.3"></script>
 </body>
+
 </html>

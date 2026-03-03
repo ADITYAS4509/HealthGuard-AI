@@ -144,12 +144,15 @@ html {
         z-index: 1001;
     }
 
-    .hamburger span {
+    .hamburger span,
+    .hamburger .bar {
         width: 1.8rem;
         height: 0.2rem;
         background: var(--clr-text);
         border-radius: 10px;
         transition: all 0.3s linear;
+        display: block;
+        margin: 3px 0;
     }
 
     /* --- GLOBAL LAYOUT --- */

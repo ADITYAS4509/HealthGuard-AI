@@ -38,6 +38,8 @@
   /* Sky 500 - Professional Medical Blue */
   --clr-accent-2: #3b82f6;
   /* Blue 500 */
+  --clr-accent-dim: rgba(14, 165, 233, 0.15);
+  /* Dimmed accent for badges */
 
   --clr-gold: #f59e0b;
   --clr-danger: #ef4444;
@@ -335,7 +337,7 @@ body {
 .navbar-nav {
   display: flex;
   align-items: center;
-  gap: 2rem;
+  gap: 1.5rem;
   list-style: none;
   flex-wrap: nowrap;
 }
@@ -2004,6 +2006,24 @@ body {
   .process-btn {
     min-width: 220px;
   }
+}
+
+/* ============================================================
+   AUTH / LOGIN PAGE
+   ============================================================ */
+.auth-container {
+  padding-top: 100px;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 2rem;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
 }
 
 /* ── MOBILE (max 767px) ── */
