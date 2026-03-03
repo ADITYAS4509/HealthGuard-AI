@@ -1132,6 +1132,9 @@ function loadSampleReport() {
    MAIN INIT
    ============================================================ */
 document.addEventListener('DOMContentLoaded', () => {
+    // Force hide loading overlay on initial load if stuck
+    showLoading(false);
+
     // Start Performance Monitor & Record Load Time
     // devMetrics.load = Math.round(performance.now());
     // updateDevMetricUI('Load', devMetrics.load);
