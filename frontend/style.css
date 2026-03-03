@@ -2418,6 +2418,11 @@ body {
   border-color: var(--clr-accent);
 }
 
+/* Section labels for mobile menu - hidden on desktop by default */
+.nav-section-label {
+  display: none;
+}
+
 .hamburger-btn .bar {
   width: 22px;
   height: 2px;
@@ -2497,7 +2502,7 @@ body {
     border-radius: 8px !important;
   }
 
-  /* Section label for grouping */
+  /* Section label for grouping - specifically visible on mobile */
   .nav-section-label {
     font-size: 0.68rem !important;
     font-weight: 700 !important;

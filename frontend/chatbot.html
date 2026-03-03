@@ -510,10 +510,10 @@
 
     <nav class="navbar">
         <a href="index.html" class="nav-brand">
-            <span class="bi">🏥</span>
+            <span class="bi"></span>
             <span class="bn">Health<span>Guard</span></span>
         </a>
-        <div class="nav-center">🤖 AI Health Assistant</div>
+        <div class="nav-center">AI Health Assistant</div>
         <div class="nav-right">
             <div class="status-pill">
                 <div class="dot" id="sDot"></div>
@@ -527,27 +527,27 @@
         <div class="messages" id="messages">
 
             <div class="welcome">
-                <div class="welcome-title">🩺 HealthGuard AI Health Assistant</div>
+                <div class="welcome-title">HealthGuard AI Health Assistant</div>
                 <div class="welcome-sub">Ask me anything about symptoms, diseases, medications, prevention, and health
                     guidance. I provide evidence-based information to help you make informed decisions.</div>
                 <div class="caps">
-                    <div class="cap"><span>🔍</span><span>Symptom meanings &amp; causes</span></div>
-                    <div class="cap"><span>💊</span><span>OTC medication suggestions</span></div>
-                    <div class="cap"><span>🛡️</span><span>Prevention &amp; lifestyle tips</span></div>
-                    <div class="cap"><span>🏥</span><span>When to see a doctor</span></div>
-                    <div class="cap"><span>📋</span><span>Disease explanations</span></div>
-                    <div class="cap"><span>🚨</span><span>Emergency warning signs</span></div>
+                    <div class="cap"><span></span><span>Symptom meanings &amp; causes</span></div>
+                    <div class="cap"><span></span><span>OTC medication suggestions</span></div>
+                    <div class="cap"><span></span><span>Prevention &amp; lifestyle tips</span></div>
+                    <div class="cap"><span></span><span>When to see a doctor</span></div>
+                    <div class="cap"><span></span><span>Disease explanations</span></div>
+                    <div class="cap"><span></span><span>Emergency warning signs</span></div>
                 </div>
             </div>
 
             <div class="msg bot">
-                <div class="avatar">🤖</div>
+                <div class="avatar">Bot</div>
                 <div class="bubble">
                     Hello! I'm your <strong>HealthGuard AI Assistant</strong>. I can explain symptoms, diseases,
                     medications, and health precautions in clear language.<br><br>
                     What would you like to know? Try asking <span style="color:var(--accent)">"What does chest pain
                         mean?"</span> or <span style="color:var(--accent)">"How do I manage high blood pressure?"</span>
-                    <div class="abox info" style="margin-top:0.75rem;">⚕️ I provide health information only — not a
+                    <div class="abox info" style="margin-top:0.75rem;">I provide health information only — not a
                         personal diagnosis. Always consult a licensed doctor for your specific situation.</div>
                 </div>
             </div>
@@ -611,14 +611,14 @@
 
         function addMsg(role, html) {
             const w = document.createElement('div'); w.className = `msg ${role}`;
-            const av = document.createElement('div'); av.className = 'avatar'; av.textContent = role === 'user' ? '👤' : '🤖';
+            const av = document.createElement('div'); av.className = 'avatar'; av.textContent = role === 'user' ? 'U' : 'AI';
             const b = document.createElement('div'); b.className = 'bubble'; b.innerHTML = html;
             w.appendChild(av); w.appendChild(b); msgEl.appendChild(w);
             msgEl.scrollTop = msgEl.scrollHeight;
         }
         function showTyping() {
             const w = document.createElement('div'); w.className = 'msg bot'; w.id = 'typ';
-            const av = document.createElement('div'); av.className = 'avatar'; av.textContent = '🤖';
+            const av = document.createElement('div'); av.className = 'avatar'; av.textContent = 'AI';
             const b = document.createElement('div'); b.className = 'bubble';
             b.innerHTML = '<div class="twrap"><span></span><span></span><span></span></div>';
             w.appendChild(av); w.appendChild(b); msgEl.appendChild(w); msgEl.scrollTop = msgEl.scrollHeight;
