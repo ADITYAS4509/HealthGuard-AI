@@ -614,14 +614,13 @@
             const av = document.createElement('div'); av.className = 'avatar'; av.textContent = role === 'user' ? 'U' : 'AI';
             const b = document.createElement('div'); b.className = 'bubble'; b.innerHTML = html;
             w.appendChild(av); w.appendChild(b); msgEl.appendChild(w);
-            msgEl.scrollTop = msgEl.scrollHeight;
         }
         function showTyping() {
             const w = document.createElement('div'); w.className = 'msg bot'; w.id = 'typ';
             const av = document.createElement('div'); av.className = 'avatar'; av.textContent = 'AI';
             const b = document.createElement('div'); b.className = 'bubble';
             b.innerHTML = '<div class="twrap"><span></span><span></span><span></span></div>';
-            w.appendChild(av); w.appendChild(b); msgEl.appendChild(w); msgEl.scrollTop = msgEl.scrollHeight;
+            w.appendChild(av); w.appendChild(b); msgEl.appendChild(w);
         }
         function rmTyping() { const t = document.getElementById('typ'); if (t) t.remove(); }
 
