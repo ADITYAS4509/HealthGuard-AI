@@ -1933,6 +1933,11 @@ body {
   opacity: 0.7;
 }
 
+/* ============================================================
+   RESPONSIVE MEDIA QUERIES — MOBILE FIRST
+   Fixes all layout issues for mobile, tablet, desktop
+   ============================================================ */
+
 /* ── LARGE DESKTOP (1280px+) ── */
 @media (min-width: 1280px) {
   .symptom-layout {
@@ -2276,5 +2281,260 @@ body {
   .process-btn span {
     display: none;
     /* hide emoji on very small screens */
+  }
+}
+
+
+/* ── HERO SECTION MOBILE FIX ── */
+@media (max-width: 900px) {
+  .hero-grid {
+    grid-template-columns: 1fr !important;
+    gap: 2rem;
+  }
+
+  .hero-stats {
+    grid-template-columns: repeat(2, 1fr) !important;
+    width: 100%;
+  }
+
+  .hero-subtitle {
+    max-width: 100%;
+    font-size: 1rem !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .hero {
+    padding: 2rem 0 1.5rem;
+  }
+
+  .hero-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem;
+  }
+
+  .hero-title {
+    font-size: clamp(1.6rem, 7vw, 2.2rem) !important;
+    letter-spacing: -0.03em;
+  }
+
+  .hero-subtitle {
+    font-size: 0.9rem !important;
+    max-width: 100%;
+    margin-bottom: 1.25rem;
+  }
+
+  .hero-badge {
+    font-size: 0.7rem;
+    padding: 0.3rem 0.75rem;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .hero-actions .btn {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+  }
+
+  /* Stats grid — 2x2 on mobile, fully visible */
+  .hero-stats {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.75rem;
+    width: 100%;
+    overflow: visible !important;
+  }
+
+  .stat-card {
+    padding: 0.9rem 1rem !important;
+    gap: 0.75rem;
+    align-items: center;
+  }
+
+  .stat-icon {
+    width: 38px !important;
+    height: 38px !important;
+    font-size: 1.1rem !important;
+    flex-shrink: 0;
+  }
+
+  .stat-value {
+    font-size: 1.25rem !important;
+    line-height: 1.2;
+  }
+
+  .stat-label {
+    font-size: 0.7rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-stats {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  .stat-card {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    padding: 0.85rem !important;
+    gap: 0.4rem !important;
+  }
+
+  .stat-icon {
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 1rem !important;
+  }
+}
+
+/* ============================================================
+   HAMBURGER MENU — MOBILE NAV
+   ============================================================ */
+
+/* Hide hamburger on desktop */
+.hamburger-btn {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 44px;
+  height: 44px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--clr-glass-border);
+  border-radius: 10px;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  z-index: 1100;
+  transition: background 0.2s;
+}
+
+.hamburger-btn:hover {
+  background: rgba(0, 229, 196, 0.1);
+  border-color: var(--clr-accent);
+}
+
+.hamburger-btn .bar {
+  width: 22px;
+  height: 2px;
+  background: var(--clr-text-primary);
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+.hamburger-btn.open .bar:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.hamburger-btn.open .bar:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+
+.hamburger-btn.open .bar:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* Mobile nav overlay */
+@media (max-width: 767px) {
+  .hamburger-btn {
+    display: flex !important;
+  }
+
+  .navbar-nav {
+    display: none !important;
+    position: fixed !important;
+    top: 65px !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    background: rgba(6, 13, 26, 0.98) !important;
+    backdrop-filter: blur(20px) !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+    padding: 1.5rem 1.25rem !important;
+    gap: 0 !important;
+    z-index: 1050 !important;
+    overflow-y: auto !important;
+    border-top: 1px solid var(--clr-glass-border) !important;
+  }
+
+  .navbar-nav.mobile-open {
+    display: flex !important;
+  }
+
+  .navbar-nav li {
+    width: 100%;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .navbar-nav li:last-child {
+    border-bottom: none;
+  }
+
+  .navbar-nav a {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.75rem !important;
+    padding: 1rem 0.5rem !important;
+    font-size: 1rem !important;
+    font-weight: 500 !important;
+    color: var(--clr-text-secondary) !important;
+    width: 100% !important;
+    border-radius: 0 !important;
+  }
+
+  .navbar-nav a:hover,
+  .navbar-nav a:active {
+    color: var(--clr-accent) !important;
+    background: rgba(0, 229, 196, 0.05) !important;
+    padding-left: 1rem !important;
+    border-radius: 8px !important;
+  }
+
+  /* Section label for grouping */
+  .nav-section-label {
+    font-size: 0.68rem !important;
+    font-weight: 700 !important;
+    color: var(--clr-text-muted) !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.12em !important;
+    padding: 1.25rem 0.5rem 0.5rem !important;
+    display: block !important;
+  }
+
+  /* Keep nav-cta styled but full width */
+  .navbar-nav .nav-cta {
+    background: var(--grad-btn) !important;
+    color: white !important;
+    padding: 0.85rem 1.25rem !important;
+    border-radius: 10px !important;
+    margin-top: 0.75rem !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+
+  /* Language selector on mobile */
+  .navbar-nav select {
+    width: 100% !important;
+    margin: 0.5rem 0 !important;
+    min-height: 44px !important;
+    font-size: 0.95rem !important;
+  }
+
+  /* Hide user dropdown arrow on mobile (handled inline) */
+  #navUserDropdown {
+    position: static !important;
+    display: none;
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid var(--clr-glass-border) !important;
+    border-radius: 10px !important;
+    margin: 0.25rem 0 !important;
+    padding: 0.5rem !important;
   }
 }
