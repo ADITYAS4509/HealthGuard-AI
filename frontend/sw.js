@@ -1,11 +1,10 @@
-const CACHE_NAME = 'healthguard-v8';
+const CACHE_NAME = 'healthguard-v9';
 
 const ASSETS_TO_CACHE = [
     './',
     './index.html',
     './login.html',
     './account.html',
-    './insurance-claims.html',
     './chatbot.html',
     './style.css',
     './app.js',

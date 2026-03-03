@@ -301,6 +301,8 @@ body {
   max-width: 1400px;
   margin: 0 auto;
   padding: 0 var(--space-8);
+  gap: 0.75rem;
+  overflow: hidden;
 }
 
 .navbar-brand {
@@ -334,21 +336,31 @@ body {
   color: var(--clr-accent);
 }
 
+.hamburger {
+  display: none;
+}
+
 .navbar-nav {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
+  gap: 1rem;
   list-style: none;
   flex-wrap: nowrap;
+  flex-shrink: 1;
+  min-width: 0;
+  overflow: hidden;
 }
 
 .navbar-nav a {
   color: var(--clr-text-primary);
   text-decoration: none;
-  font-size: var(--fs-sm);
+  font-size: clamp(0.65rem, 1vw, 0.875rem);
   font-weight: 500;
   transition: color var(--transition);
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 120px;
 }
 
 .navbar-nav a:hover {

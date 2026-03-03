@@ -135,7 +135,7 @@ const DISEASE_MAP = []; // Removed all hardcoded disease data
    ============================================================ */
 const HOSPITALS_DB = {}; // Removed local mock data
 
-/* Insurance guidance moved to /insurance-claims page — see frontend/insurance-claims.html */
+
 
 
 /* ============================================================
@@ -717,7 +717,7 @@ function animateGauge(score) {
     requestAnimationFrame(() => { path.style.strokeDashoffset = offset; });
 }
 
-/* renderInsurance removed — insurance guidance is now at /insurance-claims */
+
 
 
 let leafletMap = null;
