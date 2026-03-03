@@ -18,7 +18,6 @@
   <link rel="stylesheet" href="assets/css/responsive.css" />
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#060d1a" />
-  <script src="assets/js/responsive.js" defer></script>
 </head>
 
 <body>
@@ -45,7 +44,7 @@
   <nav class="navbar" role="navigation" aria-label="Main navigation">
     <div class="navbar-inner">
       <a href="index.html" class="navbar-brand">
-        <div class="brand-icon"></div>
+        <div class="brand-icon">🏥</div>
         <span class="brand-text">Health<span>Guard</span></span>
       </a>
       <!-- ☰ HAMBURGER BUTTON (mobile only) -->
@@ -54,14 +53,14 @@
         <span class="bar"></span>
         <span class="bar"></span>
       </button>
+
       <ul class="navbar-nav" id="navbarNav">
-        <li><span class="nav-section-label">Navigation</span></li>
         <li><a href="#symptom-section" data-i18n="nav_symptoms">Symptoms</a></li>
         <li><a href="#patient-section" data-i18n="nav_analyze">Analyze</a></li>
         <li><a href="#results-section" data-i18n="nav_results">Results</a></li>
-        <li><a href="chatbot.html">AI Chat</a></li>
+        <li><a href="chatbot.html">🤖 AI Chat</a></li>
         <li><a href="#hospitals-section" data-i18n="nav_hospitals">Hospitals</a></li>
-        <li><a href="insurance-claims.html" data-i18n="nav_insurance">Insurance Claims</a></li>
+        <li><a href="insurance-claims.html" data-i18n="nav_insurance">🏥 Insurance Claims</a></li>
         <li style="position: relative;" id="navAuthContainer">
           <a href="login.html" class="nav-cta" id="navLoginBtn"
             style="background:transparent;border:none;cursor:pointer;font-family:inherit;text-decoration:none;display:flex;align-items:center;gap:0.5rem;"
@@ -71,7 +70,7 @@
             style="display:none; position:absolute; right:0; top:120%; min-width:180px; z-index:1000; flex-direction:column; padding:0.5rem; gap:0.25rem;">
             <a href="account.html"
               style="color:var(--clr-text);text-decoration:none;padding:0.5rem;border-radius:4px;display:block;"
-              class="dropdown-item">My Account</a>
+              class="dropdown-item">👤 My Account</a>
             <a href="account.html#reports"
               style="color:var(--clr-text);text-decoration:none;padding:0.5rem;border-radius:4px;display:block;"
               class="dropdown-item">📄 Saved Reports</a>
@@ -593,7 +592,7 @@
           <ul class="footer-links">
             <li><a href="#symptom-section" data-i18n="nav_symptoms">Symptom Checker</a></li>
             <li><a href="#results-section" data-i18n="nav_results">Risk Analysis</a></li>
-            <li><a href="insurance-claims.html" data-i18n="nav_insurance">Insurance Claims</a></li>
+            <li><a href="insurance-claims.html" data-i18n="nav_insurance">🏥 Insurance Claims</a></li>
             <li><a href="#hospitals-section" data-i18n="nav_hospitals">Hospital Finder</a></li>
           </ul>
         </div>
@@ -609,7 +608,8 @@
       </div>
       <div class="footer-bottom">
         <div class="footer-copy">© 2026 AI HealthGuard. All rights reserved. For informational purposes only. | Author:
-          Aditya Shukla (adityashukla4509@gmail.com)</div>
+          Aditya Shukla (<a href="/cdn-cgi/l/email-protection" class="__cf_email__"
+            data-cfemail="1f7e7b766b667e6c776a74737e2b2a2f265f78727e7673317c7072">[email&#160;protected]</a>)</div>
         <div class="footer-tagline">Built with <span>♥</span> for better healthcare access</div>
       </div>
     </div>
@@ -620,12 +620,6 @@
 
   <!-- Developer Metrics permanently removed -->
   <!-- Leaflet Maps Script permanently bound -->
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
   <script src="assets/lib/leaflet/leaflet.js"></script>
-  <script src="assets/js/i18n.js?v=1.1"></script>
-  <script src="assets/js/symptoms_i18n.js?v=5"></script>
-  <script src="assets/js/cities.js?v=5"></script>
-  <script src="assets/js/responsive.js"></script>
-  <script src="app.js?v=9.3"></script>
-</body>
-
-</html>
+  <script src="assets/js/i18n.js
