@@ -32,8 +32,9 @@ document.addEventListener('DOMContentLoaded', () => {
             'background:rgba(0,0,0,0.55)',
             'z-index:1049',
             'transition:opacity 0.2s'
-        ].join(';');
-        document.body.appendChild(overlay);
+        ];
+        // Append to navbarInner so it shares the exact same Z-index stacking context as navbarNav
+        navbarInner.appendChild(overlay);
     }
 
     // ── OPEN / CLOSE ──

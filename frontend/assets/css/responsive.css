@@ -143,9 +143,11 @@ html {
     }
 
     .navbar-nav a {
+        display: block !important;
+        width: 100% !important;
         font-size: 1rem !important;
         color: var(--clr-text-primary) !important;
-        padding: 0.5rem 0;
+        padding: 0.75rem 0.5rem;
         border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         max-width: 100% !important;
         white-space: normal !important;
