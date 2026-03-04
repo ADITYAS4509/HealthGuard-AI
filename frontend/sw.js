@@ -1,4 +1,4 @@
-const CACHE_NAME = 'healthguard-v10';
+const CACHE_NAME = 'healthguard-v11';
 
 const ASSETS_TO_CACHE = [
     './',
