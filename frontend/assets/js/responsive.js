@@ -59,8 +59,47 @@ document.addEventListener('DOMContentLoaded', () => {
     hamburger.addEventListener('click', toggleMenu);
     overlay.addEventListener('click', closeMenu);
 
-    // Close when clicking a link inside the menu
+    // ── NAV LINK CLICK: close drawer THEN navigate ──
     navbarNav.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', closeMenu);
+        link.addEventListener('click', (e) => {
+            const href = link.getAttribute('href');
+
+            // Close the drawer first
+            closeMenu();
+
+            if (!href || href === '#') return; // nothing to navigate
+
+            // External page link (e.g. chatbot.html, login.html)
+            if (!href.startsWith('#')) {
+                // Navigate normally (don't prevent default)
+                return;
+            }
+
+            // Anchor link — scroll to section
+            e.preventDefault();
+            const targetId = href.substring(1);
+            const target = document.getElementById(targetId);
+            if (!target) return;
+
+            // Reveal section if hidden
+            if (window.getComputedStyle(target).display === 'none') {
+                target.style.display = 'block';
+                target.classList.add('visible');
+            }
+
+            // If Hospitals, auto-trigger hospital search
+            if (targetId === 'hospitals-section') {
+                setTimeout(() => {
+                    if (window.triggerHospitalSearch) window.triggerHospitalSearch();
+                }, 400);
+            }
+
+            // Smooth scroll after drawer close animation (100ms)
+            setTimeout(() => {
+                const navHeight = document.querySelector('.navbar')?.offsetHeight || 72;
+                const top = target.getBoundingClientRect().top + window.scrollY - navHeight - 16;
+                window.scrollTo({ top, behavior: 'smooth' });
+            }, 120);
+        });
     });
 });
