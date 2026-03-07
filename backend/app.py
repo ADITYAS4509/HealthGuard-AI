@@ -74,9 +74,10 @@ except ImportError:
 except Exception as e:
     print(f"[WARN] Error loading .env: {e}")
 
-app = Flask(__name__, 
-            static_folder='frontend', 
+app = Flask(__name__,
+            static_folder=os.path.join(os.path.dirname(__file__), '..', 'frontend'),
             static_url_path='')
+
 app.secret_key = os.environ.get('FLASK_SECRET_KEY', 'ai_healthguard_secret_dev_key')
 CORS(app, origins=[
     "http://localhost:5173",
