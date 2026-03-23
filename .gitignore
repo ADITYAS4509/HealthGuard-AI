@@ -1,29 +1,79 @@
-# Environment variables
+# ==============================================================
+# HealthGuard AI — .gitignore
+# ==============================================================
+
+# ── Secrets & Credentials ──────────────────────────────────────
 .env
 brevo.env
+*.env.local
+*.env.production
 
-# Database
-# users.db (Synced for production)
-
-# Python
+# ── Python ────────────────────────────────────────────────────
 __pycache__/
 *.py[cod]
 *$py.class
+*.pyo
+*.pyd
+*.pyc
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# ── Virtual Environments ──────────────────────────────────────
 .venv/
 env/
 venv/
 ENV/
+.python-version
 
-# OS specific
-.DS_Store
-Thumbs.db
+# ── Database (SQLite) ─────────────────────────────────────────
+# Comment out if you want to track DB in Git (not recommended for prod)
+backend/users.db
+*.db-journal
+*.db-shm
+*.db-wal
 
-# AGENT Artifacts (Internal)
-.agents/
-stitch-skills/
-backend.log
+# ── Debug & Test Artifacts ────────────────────────────────────
+debug_gemini.json
+gemini_out.txt
+models.txt
 risk_results.txt
+backend.log
+*.log
+test_*.py
+test2.py
 
-# Node
+# ── OS Specific ───────────────────────────────────────────────
+.DS_Store
+.DS_Store?
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# ── Editor / IDE ──────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ── Node / JS Tools ───────────────────────────────────────────
 node_modules/
 package-lock.json
+.npm
+
+# ── Internal Agent Artifacts ──────────────────────────────────
+.agents/
+stitch-skills/
+.gemini/
+
+# ── ML Models (Large Files) ───────────────────────────────────
+# Uncomment if using Git LFS instead
+# backend/models/*.pkl
+
+# ── Temporary Files ───────────────────────────────────────────
+tmp/
+*.tmp
+*.bak

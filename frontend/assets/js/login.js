@@ -139,8 +139,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (el.btnContinueLogin) el.btnContinueLogin.addEventListener('click', () => showAuthView('login'));
     if (el.btnContinueGuest) el.btnContinueGuest.addEventListener('click', () => {
         const guestSession = { success: true, data: { is_guest: true, full_name: 'Guest User', username: 'guest' } };
-        localStorage.setItem('hg_user_session', JSON.stringify(guestSession));
-
+        sessionStorage.setItem('hg_user_session', JSON.stringify(guestSession));
+        localStorage.removeItem('hg_user_session'); // Clear old persistent guest configs
         window.location.href = 'index.html';
     });
     if (el.backToLanding) el.backToLanding.addEventListener('click', showLandingView);

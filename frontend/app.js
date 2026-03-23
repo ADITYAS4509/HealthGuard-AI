@@ -361,7 +361,7 @@ function analyzeHealth() {
     if (window.isProcessingRequest) return;
 
     // Access Control Guard: Redirect to login if not authenticated
-    const sessionStore = localStorage.getItem('hg_user_session');
+    const sessionStore = localStorage.getItem('hg_user_session') || sessionStorage.getItem('hg_user_session');
     if (!sessionStore) {
         showNotif('Please log in to analyze symptoms.', 'warning');
         setTimeout(() => { window.location.href = 'login.html'; }, 1500);
@@ -455,7 +455,8 @@ function analyzeHealth() {
                         city: city,
                         lat: state.location.coords?.lat || null,
                         lon: state.location.coords?.lng || null,
-                        gemini_api_key: localStorage.getItem('GEMINI_API_KEY') // Optional user key
+                        gemini_api_key: localStorage.getItem('GEMINI_API_KEY'), // Optional user key
+                        lang: localStorage.getItem('healthguard_lang') || 'en'  // Active UI language
                     })
                 });
 
@@ -542,10 +543,10 @@ function renderResults(result) {
     // Condition
     $('#conditionName').textContent = result.name;
 
-    // Requirement #8: Conditional Fallback Badge
+    // Fallback Badge — permanently hidden (local mapper predictions are medically valid)
     const fbBadge = document.getElementById('fallbackBadge');
     if (fbBadge) {
-        fbBadge.style.display = result.fallback ? 'inline-block' : 'none';
+        fbBadge.style.display = 'none';
     }
 
     // Requirement #6: Multi-Disease Display
@@ -581,16 +582,19 @@ function renderResults(result) {
     $('#gaugeValue').textContent = result.score;
     $('#gaugeValue').style.color = result.risk === 'High' ? 'var(--clr-danger)' : result.risk === 'Medium' ? 'var(--clr-warning)' : 'var(--clr-accent)';
 
+    const lang = localStorage.getItem('healthguard_lang') || 'en';
+    const t = TRANSLATIONS[lang] || TRANSLATIONS['en'];
+
     // Safe Clinical Output Mapping
     const list = $('#influentialList');
     list.innerHTML = `
         <div style="margin-bottom:1rem;">
-            <strong style="color:var(--clr-text-primary); font-size:1rem;">Clinical Context:</strong>
+            <strong style="color:var(--clr-text-primary); font-size:1rem;">${t.clinical_context || 'Clinical Context'}:</strong>
             <p style="color:var(--clr-text-muted); font-size:0.9rem; margin-top:0.25rem;">${result.explanation || "No explanation provided."}</p>
         </div>
         <div style="margin-bottom:1rem;">
-            <strong style="color:var(--clr-text-primary); font-size:1rem;">Recommended Next Steps:</strong>
-            <p style="color:var(--clr-primary); font-size:0.9rem; margin-top:0.25rem; font-weight:600;">${result.action || "Monitor safely."}</p>
+            <strong style="color:var(--clr-text-primary); font-size:1rem;">${t.recommended_next_steps || 'Recommended Next Steps'}:</strong>
+            <p style="color:var(--clr-primary); font-size:0.9rem; margin-top:0.25rem; font-weight:600;">${result.action || "Consult Medical Professional"}</p>
         </div>
         <div style="margin-bottom:1rem; background:rgba(255,107,107,0.1); border-left:3px solid var(--clr-danger); padding:0.5rem;">
             <strong style="color:var(--clr-danger); font-size:0.9rem;">Red Flags:</strong>
@@ -750,11 +754,14 @@ function getOwnershipBadge(h) {
         name.includes('columbia') || name.includes('wockhardt') || name.includes('global') ||
         name.includes('care hospital') || name.includes('rainbow') || name.includes('aster');
 
+    const lang = localStorage.getItem('healthguard_lang') || 'en';
+    const t = TRANSLATIONS[lang] || TRANSLATIONS['en'];
+
     if (isGovt) {
-        return '<span class="ownership-badge govt">🏛️ Govt Hospital</span>';
+        return `<span class="ownership-badge govt">🏛️ ${t.hospital_govt || 'Govt Hospital'}</span>`;
     }
     if (isPrivate) {
-        return '<span class="ownership-badge private">🏥 Private Hospital</span>';
+        return `<span class="ownership-badge private">🏥 ${t.hospital_private || 'Private Hospital'}</span>`;
     }
     return ''; // Unknown — show no badge
 }
@@ -777,23 +784,26 @@ function renderHospitals(hospitalsData, coords = null) {
         return;
     }
 
+    const lang = localStorage.getItem('healthguard_lang') || 'en';
+    const t = TRANSLATIONS[lang] || TRANSLATIONS['en'];
+
     grid.innerHTML = hospitalsData.map((h, index) => {
         const hName = h.name;
         const hDistance = h.distance_km;
         const isEmergency = h.emergency;
         const phoneEscaped = h.phone.replace(/[^0-9+]/g, '');
 
-        let recommendTag = '<span class="tag-mini">OPD Suitable</span>';
+        let recommendTag = `<span class="tag-mini">${t.hospital_opd_suitable || 'OPD Suitable'}</span>`;
         if (risk === 'Critical' || risk === 'High') {
-            recommendTag = '<span class="tag-mini bg-danger">IPD Recommended</span>';
+            recommendTag = `<span class="tag-mini bg-danger">${t.hospital_ipd_recommended || 'IPD Recommended'}</span>`;
         } else if (risk === 'Medium') {
-            recommendTag = '<span class="tag-mini" style="background:rgba(255,193,7,0.15);color:#ffc107;border-color:rgba(255,193,7,0.3);">OPD/IPD</span>';
+            recommendTag = `<span class="tag-mini" style="background:rgba(255,193,7,0.15);color:#ffc107;border-color:rgba(255,193,7,0.3);">${t.hospital_opd_ipd || 'OPD/IPD'}</span>`;
         }
 
         let nearestEmergencyBadge = '';
         let cardClasses = 'glass-card hospital-card fade-in';
         if (h.is_nearest_emergency) {
-            nearestEmergencyBadge = '<div style="margin-top:0.5rem;"><span class="tag-mini bg-danger" style="animation: pulse 2s infinite;">🚑 Nearest Emergency Facility</span></div>';
+            nearestEmergencyBadge = `<div style="margin-top:0.5rem;"><span class="tag-mini bg-danger" style="animation: pulse 2s infinite;">${t.hospital_nearest_emergency || '🚑 Nearest Emergency Facility'}</span></div>`;
             cardClasses += ' border-pulse-danger';
         } else if (risk === 'Critical' && isEmergency) {
             cardClasses += ' border-pulse-danger';
@@ -804,7 +814,7 @@ function renderHospitals(hospitalsData, coords = null) {
         return `
         <div class="${cardClasses}" id="hospital-card-${index}">
           <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:4px;">
-              <div class="hospital-type-badge ${isEmergency ? 'emergency' : 'general'}">${isEmergency ? '🚑 Emergency' : '🏥 General'}</div>
+              <div class="hospital-type-badge ${isEmergency ? 'emergency' : 'general'}">${isEmergency ? '🚑 ' + (t.hospital_emergency_marker || 'Emergency') : '🏥 ' + (t.hospital_general_marker || 'General')}</div>
               <div style="display:flex; gap:4px; align-items:center; flex-wrap:wrap;">
                 ${ownershipBadge}
                 ${recommendTag}
@@ -815,12 +825,12 @@ function renderHospitals(hospitalsData, coords = null) {
             <div class="hospital-name">${hName}</div>
           </div>
           <div class="hospital-meta" style="margin-top:0.5rem">
-            <div class="meta-row"><span class="icon">🛣️</span>${hDistance} km away</div>
-            <div class="meta-row"><span class="icon">📞</span>${h.isGenericHelpline ? '<span style="color:var(--clr-accent);">Emergency Helpline</span>' : h.phone}</div>
+            <div class="meta-row"><span class="icon">🛣️</span>${hDistance} ${t.hospital_away || 'km away'}</div>
+            <div class="meta-row"><span class="icon">📞</span>${h.isGenericHelpline ? `<span style="color:var(--clr-accent);">${t.hospitals_emergency || 'Emergency Helpline'}</span>` : h.phone}</div>
           </div>
           <div class="hospital-actions" style="display:flex !important; visibility:visible !important;">
-            <a href="tel:${h.isGenericHelpline ? '108' : phoneEscaped}" class="btn btn-primary btn-sm" style="flex:1; display:flex;">📞 ${h.isGenericHelpline ? 'Call 108' : 'Call'}</a>
-            <a href="${h.nav_link}" target="_blank" rel="noopener" class="btn btn-outline btn-sm" style="flex:1; display:flex;">🗺️ Navigate</a>
+            <a href="tel:${h.isGenericHelpline ? '108' : phoneEscaped}" class="btn btn-primary btn-sm" style="flex:1; display:flex;">📞 ${h.isGenericHelpline ? 'Call 108' : (t.btn_call_hosp || 'Call')}</a>
+            <a href="${h.nav_link}" target="_blank" rel="noopener" class="btn btn-outline btn-sm" style="flex:1; display:flex;">🗺️ ${t.btn_navigate_hosp || 'Navigate'}</a>
           </div>
         </div>
         `;
@@ -1630,7 +1640,21 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function checkAuthState() {
-        const sessionStore = localStorage.getItem('hg_user_session');
+        let localStore = localStorage.getItem('hg_user_session');
+        // Purge old persistent guest sessions immediately
+        if (localStore) {
+            try {
+                let parsed = JSON.parse(localStore);
+                if (parsed && parsed.data && parsed.data.is_guest) {
+                    localStorage.removeItem('hg_user_session');
+                    localStore = null;
+                }
+            } catch(e){}
+        }
+        
+        const sessionTempStore = sessionStorage.getItem('hg_user_session');
+        const sessionStore = localStore || sessionTempStore;
+        
         const session = sessionStore ? JSON.parse(sessionStore) : null;
 
         if (session && session.data && !session.data.is_guest) {
@@ -1657,9 +1681,9 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (session && session.data && session.data.is_guest) {
             // MODE 2: GUEST USER (Analyze only, No Save)
             if (navLoginBtn) {
-                navLoginBtn.innerHTML = `Login`;
+                navLoginBtn.innerHTML = `👤 Guest`;
                 navLoginBtn.setAttribute('href', 'login.html');
-                navLoginBtn.dataset.i18n = 'nav_login';
+                navLoginBtn.dataset.i18n = ''; // Remove localization override to preserve Guest text
                 navLoginBtn.style.background = ''; // Restore accent color
                 if (navUserDropdown) navUserDropdown.style.display = 'none';
             }
@@ -1762,6 +1786,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     checkBackendHealth();
     initSession();
+    initGeolocation();
 
     // Hook into global language switch to natively re-render symptoms
     document.addEventListener('languageChanged', (e) => {

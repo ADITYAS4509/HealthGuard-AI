@@ -1,9 +1,13 @@
 from flask import Flask, request, jsonify, session
 from flask_cors import CORS
 import joblib
+import sys
 import os
 import sqlite3
 import time
+
+# Ensure project root is in path to resolve 'backend' module issues with joblib/pickling
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 import random
 import threading
 import requests  # Required by predict_from_rapidapi
@@ -16,15 +20,20 @@ from utils.hospital_finder import find_nearby_hospitals
 from utils.risk_profiler import calculate_risk
 from utils.symptom_mapper import map_symptoms_to_condition
 from utils.gemini_client import get_gemini_explanation, predict_from_gemini
+from utils.translator import translate_text
 
 
 try:
     from dotenv import load_dotenv
-    # Search for .env in current directory (root)
-    env_path = os.path.join(os.path.dirname(__file__), '.env')
+    # Bulletproof way to find the .env file in the parent directory
+    BASE_DIR = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+    env_path = os.path.join(BASE_DIR, '.env')
+    
     if os.path.exists(env_path):
         load_dotenv(env_path, override=True)
         print(f"[SYS] Loaded environment from: {env_path}")
+    else:
+        print(f"[WARN] .env file not found at: {env_path}")
     
     print("[SYS] Environment initialization complete.")
     
@@ -523,6 +532,8 @@ def analyze():
         lat = data.get("lat")
         lon = data.get("lon")
         api_key = data.get("gemini_api_key") or os.getenv("GEMINI_API_KEY")
+        lang = data.get("lang", "en")  # Language for Gemini translation
+        print(f"[SYS] Analyze Request - Symptoms: {symptoms}, Lang: {lang}")
 
         # TIERED DIAGNOSIS STRATEGY (Requirement #1)
         final_result = None
@@ -539,7 +550,7 @@ def analyze():
             
             # Tier 2: Gemini
             print(f"[SYS] Tier 1 failed ({fallback_reason}), trying Tier 2: Gemini...")
-            gemini_res = predict_from_gemini(symptoms, age, api_key)
+            gemini_res = predict_from_gemini(symptoms, age, api_key, lang=lang)
             if gemini_res and gemini_res.get("success"):
                 final_result = gemini_res
                 response_source = "gemini"
@@ -601,7 +612,29 @@ def analyze():
         )
 
         # 6. Safe Gemini Explanation
-        explanation = get_gemini_explanation(primary_condition, risk, symptoms, age, api_key)
+        explanation = get_gemini_explanation(primary_condition, risk, symptoms, age, api_key, lang=lang)
+
+        # 7. Localized Hospital and City Names
+        translated_hospitals = hospitals
+        if lang != "en" and hospitals:
+            try:
+                h_names = [h["name"] for h in hospitals]
+                translated_names = translate_text(h_names, target_lang=lang, api_key=api_key)
+                if isinstance(translated_names, list) and len(translated_names) == len(hospitals):
+                    translated_hospitals = []
+                    for i, h in enumerate(hospitals):
+                        h_copy = h.copy()
+                        h_copy["name"] = translated_names[i]
+                        translated_hospitals.append(h_copy)
+            except Exception as te:
+                print(f"[WARN] Hospital translation failed: {te}")
+        
+        translated_city = city
+        if lang != "en" and city:
+            try:
+                translated_city = translate_text(city, target_lang=lang, api_key=api_key)
+            except Exception as te:
+                print(f"[WARN] City translation failed: {te}")
 
         final_payload = {
             "condition": primary_condition,
@@ -610,7 +643,8 @@ def analyze():
             "risk": risk,
             "explanation": explanation,
             "medicines": medicines_data,
-            "hospitals": hospitals,
+            "hospitals": translated_hospitals,
+            "translated_city": translated_city,
             "location_source": location_source,
             "source": response_source,
             "debug": { # Requirement #9 metadata for dev panel
@@ -620,7 +654,7 @@ def analyze():
                 "api": response_source.upper(),
                 "symptoms_sent": symptoms
             },
-            "fallback": (response_source != "rapidapi"), # Requirement #8
+            "fallback": (response_source not in ["rapidapi", "gemini"]), # Requirement #8
             "insurance": {
                 "eligibility": insurance_eligibility,
                 "type": insurance_type,
